@@ -1,0 +1,70 @@
+{
+  "name": "@0gfoundation/ask-ai-widget",
+  "version": "0.1.0",
+  "description": "Floating Ask AI widget for any React site. Backed by 0G Compute, ships with theming, Turnstile bot protection, and conversation persistence.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build:js": "tsup",
+    "build:css": "npx @tailwindcss/cli -i ./src/styles/widget.css -o ./dist/styles.css --minify",
+    "build": "npm run build:js && npm run build:css",
+    "dev": "npm run dev:demo",
+    "dev:demo": "vite",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "0g",
+    "ai",
+    "chatbot",
+    "widget",
+    "react",
+    "rag",
+    "docusaurus"
+  ],
+  "author": "0G Labs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0gfoundation/ask-ai-widget"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "dependencies": {
+    "@marsidev/react-turnstile": "^1.5.1",
+    "lucide-react": "^0.540.0",
+    "prism-react-renderer": "^2.4.1",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^5.0.0",
+    "@tailwindcss/cli": "^4",
+    "@tailwindcss/vite": "^4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4",
+    "tsup": "^8.3.5",
+    "typescript": "^5",
+    "vite": "^6.0.0"
+  }
+}
