@@ -70,7 +70,18 @@ export function AskAIWidget({
 
   const toggle = useCallback(() => setOpen((v) => !v), []);
 
-  const corner = position === "bottom-left" ? "left-4" : "right-4";
+  // Both string literals must appear verbatim in source so Tailwind's static
+  // scanner generates the utilities (a template-literal `sm:${corner}`
+  // produces the right text at runtime but Tailwind never sees the combined
+  // token at scan time).
+  //
+  // Trigger sits at right-4 (1rem); the panel sits at right-20 (5rem) so the
+  // trigger remains visible to its right with a small gap, instead of the
+  // panel covering the trigger entirely.
+  const triggerCornerClass =
+    position === "bottom-left" ? "left-4" : "right-4";
+  const panelCornerClass =
+    position === "bottom-left" ? "sm:left-20" : "sm:right-20";
 
   return (
     <ThemeProvider value={resolvedTheme}>
@@ -80,21 +91,19 @@ export function AskAIWidget({
         style={applyAccentVars(accent)}
         className="aai-root"
       >
-        {/* Floating trigger button. Hidden via opacity when panel is open so
-            the button slides out as the panel slides in. */}
+        {/* Floating trigger button. Stays visible at all times so the panel
+            can sit next to it (Drift / Crisp style) instead of covering it.
+            On mobile the panel goes fullscreen and its higher z-index hides
+            the trigger naturally. */}
         <button
           type="button"
           onClick={toggle}
           aria-label={open ? "Close Ask AI" : triggerLabel}
           aria-expanded={open}
-          className={`fixed bottom-4 ${corner} z-[9998] inline-flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[var(--aai-shadow)] transition-all duration-200 hover:scale-105 ${
-            open
-              ? "pointer-events-none scale-90 opacity-0"
-              : "scale-100 opacity-100"
-          }`}
+          className={`fixed bottom-4 ${triggerCornerClass} z-[9998] inline-flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[var(--aai-shadow)] transition-transform duration-200 hover:scale-105 active:scale-95`}
           style={{ backgroundColor: accent }}
         >
-          <MessageCircle className="h-6 w-6" />
+          {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
         </button>
 
         {/* Panel — fixed positioned, animates from corner. On mobile this
@@ -107,7 +116,7 @@ export function AskAIWidget({
             open
               ? "translate-y-0 opacity-100"
               : "pointer-events-none translate-y-2 opacity-0"
-          } inset-0 sm:inset-auto sm:bottom-4 sm:${corner} sm:h-[600px] sm:max-h-[calc(100vh-2rem)] sm:w-[400px] sm:rounded-2xl sm:border sm:border-[var(--aai-border)]`}
+          } inset-0 sm:inset-auto sm:bottom-4 ${panelCornerClass} sm:h-[600px] sm:max-h-[calc(100vh-2rem)] sm:w-[400px] sm:rounded-2xl sm:border sm:border-[var(--aai-border)]`}
         >
           {/* Panel header */}
           <div className="flex shrink-0 items-center justify-between border-b border-[var(--aai-border)] bg-[var(--aai-bg)] px-4 py-3">

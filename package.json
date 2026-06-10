@@ -26,7 +26,8 @@
     "dev": "npm run dev:demo",
     "dev:demo": "vite",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepare": "npm run build"
   },
   "keywords": [
     "0g",

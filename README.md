@@ -4,9 +4,15 @@ A floating Ask AI chatbot for any React site. Backed by 0G Compute. Drop it into
 
 ## Install
 
+This package is distributed directly from GitHub, not the npm registry. The package's `prepare` script builds the bundle on install, so no manual build step is needed on the consumer side.
+
 ```bash
-npm install @0gfoundation/ask-ai-widget
+npm install github:0gfoundation/ask-ai-widget#v0.1.0
 ```
+
+Pin to a tag in production (`#v0.1.0`). For tracking the bleeding edge, use the branch: `npm install github:0gfoundation/ask-ai-widget#main`.
+
+The imported package name is still `@0gfoundation/ask-ai-widget` since that's what's declared in the package's own `package.json` — the install URL just controls where the code comes from.
 
 ## Usage
 
