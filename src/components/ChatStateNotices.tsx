@@ -18,7 +18,10 @@ interface ChatStateNoticesProps {
 
 export default function ChatStateNotices({ error, onDismiss }: ChatStateNoticesProps) {
   if (!error) return null;
-  const text = error.message && error.code === "bad_request" ? error.message : FRIENDLY[error.code];
+  // The backend's error messages are user-safe and more specific than the
+  // fallbacks here ("Inference is not configured" vs a generic upstream
+  // shrug), so prefer them whenever provided.
+  const text = error.message || FRIENDLY[error.code];
   return (
     <div className="mx-4 mb-2 flex items-start gap-2 rounded-xl border border-[var(--aai-border)] bg-[var(--aai-bg-card)] px-3 py-2 text-sm text-[var(--aai-fg-muted)]">
       <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--aai-accent-text)]" />
