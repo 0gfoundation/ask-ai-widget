@@ -108,6 +108,14 @@ export interface AskAIWidgetProps {
   triggerLabel?: string;
 
   /**
+   * Trigger appearance. `"bubble"` is the classic round chat button;
+   * `"pill"` renders a labeled pill (sparkle icon + `triggerLabel` text)
+   * for hosts that treat Ask AI as a first-class action.
+   * Default: `"bubble"`.
+   */
+  triggerVariant?: "bubble" | "pill";
+
+  /**
    * Optional starter questions rendered as chips in the empty state.
    * Pass an empty array to hide them. Default: a 0G-focused set.
    */
