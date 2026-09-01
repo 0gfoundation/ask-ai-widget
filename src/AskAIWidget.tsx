@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { MessageCircle, X } from "lucide-react";
+import { Maximize2, MessageCircle, X } from "lucide-react";
 import ChatPanel from "./components/ChatPanel";
 import { ThemeProvider, useThemeResolver } from "./theme";
 import type { AskAIWidgetProps } from "./types";
@@ -28,6 +28,9 @@ export function AskAIWidget({
   accent = "#B75FFF",
   position = "bottom-right",
   initialOpen = false,
+  open: openProp,
+  onOpenChange,
+  maximizeHref,
   storageKey = "ask-ai-widget:conversation",
   triggerLabel = "Ask AI",
   starterQuestions = DEFAULT_STARTERS,
@@ -36,8 +39,9 @@ export function AskAIWidget({
   const resolvedTheme = useThemeResolver(theme);
 
   // Per-tab open/closed state. Survives across navigations inside the same
-  // tab but not a full reload of the host site.
-  const [open, setOpen] = useState<boolean>(() => {
+  // tab but not a full reload of the host site. When the `open` prop is
+  // provided the component is controlled and this state is ignored.
+  const [openState, setOpenState] = useState<boolean>(() => {
     if (typeof window === "undefined") return initialOpen;
     try {
       const stored = window.sessionStorage.getItem(OPEN_STATE_KEY);
@@ -49,14 +53,26 @@ export function AskAIWidget({
     return initialOpen;
   });
 
+  const isControlled = openProp !== undefined;
+  const open = isControlled ? openProp : openState;
+
+  const setOpen = useCallback(
+    (next: boolean | ((v: boolean) => boolean)) => {
+      const value = typeof next === "function" ? next(open) : next;
+      if (!isControlled) setOpenState(value);
+      onOpenChange?.(value);
+    },
+    [isControlled, onOpenChange, open],
+  );
+
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || isControlled) return;
     try {
       window.sessionStorage.setItem(OPEN_STATE_KEY, open ? "true" : "false");
     } catch {
       // ignore
     }
-  }, [open]);
+  }, [open, isControlled]);
 
   // Close on Escape — accessibility + parity with most overlay UX.
   useEffect(() => {
@@ -131,6 +147,16 @@ export function AskAIWidget({
                 Ask AI
               </span>
             </div>
+            <div className="flex items-center gap-1">
+            {maximizeHref && (
+              <a
+                href={maximizeHref}
+                aria-label="Open full page"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[var(--aai-fg-muted)] transition-colors hover:bg-[var(--aai-hover-surface)] hover:text-[var(--aai-fg)]"
+              >
+                <Maximize2 className="h-4 w-4" />
+              </a>
+            )}
             <button
               type="button"
               onClick={() => setOpen(false)}
@@ -139,6 +165,7 @@ export function AskAIWidget({
             >
               <X className="h-4 w-4" />
             </button>
+            </div>
           </div>
 
           <div className="min-h-0 flex-1">
