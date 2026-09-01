@@ -1,6 +1,6 @@
 {
   "name": "@0gfoundation/ask-ai-widget",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Floating Ask AI widget for any React site. Backed by 0G Compute, ships with theming, Turnstile bot protection, and conversation persistence.",
   "type": "module",
   "main": "./dist/index.cjs",

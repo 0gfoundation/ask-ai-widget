@@ -105,19 +105,20 @@ export function AskAIWidget({
 
   const toggle = useCallback(() => setOpen((v) => !v), []);
 
-  // Trigger sits 1rem from its corner; the desktop panel sits 5rem in so the
-  // trigger stays visible next to it with a small gap.
+  // Trigger sits 1rem from its corner; the desktop panel stacks directly
+  // above it (same corner) with a small gap, so the trigger is never covered.
   const triggerCornerClass =
     position === "bottom-left" ? "left-4" : "right-4";
+  const panelBottom = triggerVariant === "pill" ? "4.5rem" : "5.25rem";
   const panelGeometry: CSSProperties = isDesktop
     ? {
         top: "auto",
-        bottom: "1rem",
-        [position === "bottom-left" ? "left" : "right"]: "5rem",
+        bottom: panelBottom,
+        [position === "bottom-left" ? "left" : "right"]: "1rem",
         [position === "bottom-left" ? "right" : "left"]: "auto",
         width: 400,
         height: 600,
-        maxHeight: "calc(100vh - 2rem)",
+        maxHeight: `calc(100vh - ${panelBottom} - 1rem)`,
         borderRadius: "1rem",
       }
     : { inset: 0 };
