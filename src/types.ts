@@ -73,6 +73,28 @@ export interface AskAIWidgetProps {
   initialOpen?: boolean;
 
   /**
+   * Controlled open state. When provided, the widget follows this value and
+   * reports user-initiated changes through `onOpenChange` instead of
+   * managing its own state. Leave undefined for uncontrolled behavior.
+   */
+  open?: boolean;
+
+  /**
+   * Called when the user opens or closes the panel (trigger click, close
+   * button, Escape). Required for controlled usage; also fired in
+   * uncontrolled mode as a notification.
+   */
+  onOpenChange?: (open: boolean) => void;
+
+  /**
+   * When set, the panel header shows a maximize button linking here, for
+   * hosts that pair the widget with a full-page chat (e.g. build.0g.ai/ask).
+   * The conversation follows via `storageKey` when the page uses the same
+   * key. Default: hidden.
+   */
+  maximizeHref?: string;
+
+  /**
    * localStorage key used to persist the conversation. Set to a unique
    * value if you embed multiple widgets per site. Pass `null` to disable
    * persistence. Default: `"ask-ai-widget:conversation"`.
