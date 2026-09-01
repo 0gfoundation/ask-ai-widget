@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { CSSProperties } from "react";
-import { Maximize2, MessageCircle, X } from "lucide-react";
+import { Maximize2, MessageCircle, Sparkles, X } from "lucide-react";
 import ChatPanel from "./components/ChatPanel";
 import { ThemeProvider, useThemeResolver } from "./theme";
 import type { AskAIWidgetProps } from "./types";
@@ -49,6 +49,7 @@ export function AskAIWidget({
   onOpenChange,
   maximizeHref,
   storageKey = "ask-ai-widget:conversation",
+  triggerVariant = "bubble",
   triggerLabel = "Ask AI",
   starterQuestions = DEFAULT_STARTERS,
   branding = true,
@@ -133,16 +134,30 @@ export function AskAIWidget({
             can sit next to it (Drift / Crisp style) instead of covering it.
             On mobile the panel goes fullscreen and its higher z-index hides
             the trigger naturally. */}
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label={open ? "Close Ask AI" : triggerLabel}
-          aria-expanded={open}
-          className={`fixed bottom-4 ${triggerCornerClass} z-[9998] inline-flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[var(--aai-shadow)] transition-transform duration-200 hover:scale-105 active:scale-95`}
-          style={{ backgroundColor: accent }}
-        >
-          {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
-        </button>
+        {triggerVariant === "pill" ? (
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label={open ? "Close Ask AI" : triggerLabel}
+            aria-expanded={open}
+            className={`fixed bottom-4 ${triggerCornerClass} z-[9998] inline-flex h-11 items-center gap-2 rounded-full border px-5 text-sm font-semibold shadow-[var(--aai-shadow)] transition-transform duration-200 hover:scale-105 active:scale-95 bg-[var(--aai-bg)] text-[var(--aai-accent-text)]`}
+            style={{ borderColor: accent }}
+          >
+            {open ? <X className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
+            {triggerLabel}
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label={open ? "Close Ask AI" : triggerLabel}
+            aria-expanded={open}
+            className={`fixed bottom-4 ${triggerCornerClass} z-[9998] inline-flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[var(--aai-shadow)] transition-transform duration-200 hover:scale-105 active:scale-95`}
+            style={{ backgroundColor: accent }}
+          >
+            {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+          </button>
+        )}
 
         {/* Panel — fixed positioned, animates from corner. On mobile this
             takes over the full viewport for usable text input. */}
