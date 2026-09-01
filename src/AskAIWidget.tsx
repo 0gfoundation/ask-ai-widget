@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 import { Maximize2, MessageCircle, X } from "lucide-react";
 import ChatPanel from "./components/ChatPanel";
 import { ThemeProvider, useThemeResolver } from "./theme";
@@ -12,6 +13,22 @@ const DEFAULT_STARTERS = [
 ];
 
 const OPEN_STATE_KEY = "ask-ai-widget:open";
+
+// Panel geometry is set inline rather than via utility classes: host sites
+// ship their own Tailwind bundles, and merged cascade layers can defeat the
+// widget's responsive position utilities (observed on build.0g.ai). Inline
+// styles are immune to any host stylesheet.
+function useIsDesktop(): boolean {
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 640px)");
+    const onChange = () => setIsDesktop(mql.matches);
+    onChange();
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+  return isDesktop;
+}
 
 function applyAccentVars(accent: string): React.CSSProperties {
   // Cast to React.CSSProperties so TS accepts the custom prop names.
@@ -37,6 +54,7 @@ export function AskAIWidget({
   branding = true,
 }: AskAIWidgetProps) {
   const resolvedTheme = useThemeResolver(theme);
+  const isDesktop = useIsDesktop();
 
   // Per-tab open/closed state. Survives across navigations inside the same
   // tab but not a full reload of the host site. When the `open` prop is
@@ -86,18 +104,22 @@ export function AskAIWidget({
 
   const toggle = useCallback(() => setOpen((v) => !v), []);
 
-  // Both string literals must appear verbatim in source so Tailwind's static
-  // scanner generates the utilities (a template-literal `sm:${corner}`
-  // produces the right text at runtime but Tailwind never sees the combined
-  // token at scan time).
-  //
-  // Trigger sits at right-4 (1rem); the panel sits at right-20 (5rem) so the
-  // trigger remains visible to its right with a small gap, instead of the
-  // panel covering the trigger entirely.
+  // Trigger sits 1rem from its corner; the desktop panel sits 5rem in so the
+  // trigger stays visible next to it with a small gap.
   const triggerCornerClass =
     position === "bottom-left" ? "left-4" : "right-4";
-  const panelCornerClass =
-    position === "bottom-left" ? "sm:left-20" : "sm:right-20";
+  const panelGeometry: CSSProperties = isDesktop
+    ? {
+        top: "auto",
+        bottom: "1rem",
+        [position === "bottom-left" ? "left" : "right"]: "5rem",
+        [position === "bottom-left" ? "right" : "left"]: "auto",
+        width: 400,
+        height: 600,
+        maxHeight: "calc(100vh - 2rem)",
+        borderRadius: "1rem",
+      }
+    : { inset: 0 };
 
   return (
     <ThemeProvider value={resolvedTheme}>
@@ -128,11 +150,12 @@ export function AskAIWidget({
           role="dialog"
           aria-label="Ask AI"
           aria-hidden={!open}
+          style={panelGeometry}
           className={`fixed z-[9999] flex flex-col overflow-hidden bg-[var(--aai-bg)] shadow-[var(--aai-shadow-lg)] transition-all duration-200 ${
             open
               ? "translate-y-0 opacity-100"
               : "pointer-events-none translate-y-2 opacity-0"
-          } inset-0 sm:inset-auto sm:bottom-4 ${panelCornerClass} sm:h-[600px] sm:max-h-[calc(100vh-2rem)] sm:w-[400px] sm:rounded-2xl sm:border sm:border-[var(--aai-border)]`}
+          } sm:border sm:border-[var(--aai-border)]`}
         >
           {/* Panel header */}
           <div className="flex shrink-0 items-center justify-between border-b border-[var(--aai-border)] bg-[var(--aai-bg)] px-4 py-3">
