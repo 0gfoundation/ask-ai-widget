@@ -193,7 +193,8 @@ export function AskAIWidget({
               </span>
             </div>
             <div className="flex items-center gap-1">
-            {maximizeHref && (
+            {/* On mobile the panel is already fullscreen; maximize is redundant */}
+            {maximizeHref && isDesktop && (
               <a
                 href={maximizeHref}
                 aria-label="Open full page"
