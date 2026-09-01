@@ -31,7 +31,7 @@ function loadConversation(storageKey: string | null): ChatMessage[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
+    const valid = parsed.filter(
       (m: unknown): m is ChatMessage =>
         !!m &&
         typeof m === "object" &&
@@ -39,6 +39,14 @@ function loadConversation(storageKey: string | null): ChatMessage[] {
         typeof (m as ChatMessage).content === "string" &&
         (m as ChatMessage).content.length > 0,
     );
+    // A conversation can be persisted mid-send (e.g. the request failed or
+    // the tab closed before the reply). Restoring a trailing user message
+    // with no answer reads as a hung "sent" bubble, so trim back to the last
+    // assistant reply; an empty result shows the starter questions instead.
+    while (valid.length > 0 && valid[valid.length - 1].role === "user") {
+      valid.pop();
+    }
+    return valid;
   } catch {
     return [];
   }
