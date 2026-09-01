@@ -140,8 +140,8 @@ export function AskAIWidget({
             onClick={toggle}
             aria-label={open ? "Close Ask AI" : triggerLabel}
             aria-expanded={open}
-            className={`fixed bottom-4 ${triggerCornerClass} z-[9998] inline-flex h-11 items-center gap-2 rounded-full border px-5 text-sm font-semibold shadow-[var(--aai-shadow)] transition-transform duration-200 hover:scale-105 active:scale-95 bg-[var(--aai-bg)] text-[var(--aai-accent-text)]`}
-            style={{ borderColor: accent }}
+            className={`fixed bottom-4 ${triggerCornerClass} z-[9998] inline-flex h-11 items-center gap-2 rounded-full px-5 text-sm font-semibold text-white shadow-[var(--aai-shadow)] transition-transform duration-200 hover:scale-105 active:scale-95`}
+            style={{ backgroundColor: accent }}
           >
             {open ? <X className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
             {triggerLabel}
