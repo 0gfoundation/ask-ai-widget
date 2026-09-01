@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { Maximize2, MessageCircle, Sparkles, X } from "lucide-react";
 import ChatPanel from "./components/ChatPanel";
@@ -75,13 +75,19 @@ export function AskAIWidget({
   const isControlled = openProp !== undefined;
   const open = isControlled ? openProp : openState;
 
+  // Functional updates must see the CURRENT open value even from callbacks
+  // memoized long ago (the trigger's toggle); a ref avoids stale closures
+  // that made a controlled widget open-only.
+  const openRef = useRef(open);
+  openRef.current = open;
+
   const setOpen = useCallback(
     (next: boolean | ((v: boolean) => boolean)) => {
-      const value = typeof next === "function" ? next(open) : next;
+      const value = typeof next === "function" ? next(openRef.current) : next;
       if (!isControlled) setOpenState(value);
       onOpenChange?.(value);
     },
-    [isControlled, onOpenChange, open],
+    [isControlled, onOpenChange],
   );
 
   useEffect(() => {
