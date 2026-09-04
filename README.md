@@ -208,4 +208,4 @@ Emits to `dist/`:
 
 ## License
 
-MIT
+The code is MIT. The Zed character is not: the design, name and likeness, the artwork in `assets/zed/`, the design source in `brand/zed/`, and the drawing in `src/zed/Zed.tsx` are copyright 0G Labs, all rights reserved. You can display Zed as the widget and the `Zed` component render him on a site that embeds them. Anything else, including modified versions or derived mascots, needs permission from 0G Labs. See [LICENSE](LICENSE).
