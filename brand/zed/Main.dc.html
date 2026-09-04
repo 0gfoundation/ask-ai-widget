@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; background: #0B0A12; color: #F1ECFA; font-family: "Geist", "Helvetica Neue", Arial, sans-serif; font-weight: 300; }
+    a { color: #C98BFF; } a:hover { color: #E3C1FF; }
+  </style>
+</helmet>
+<div style="width: 1200px; min-height: 920px; box-sizing: border-box; padding: 48px; background: #0B0A12; display: flex; flex-direction: column; gap: 32px;">
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #C98BFF; font-weight: 500;">0G · Ask Zed · character sheet</div>
+    <div style="font-size: 88px; line-height: 0.95; letter-spacing: -0.03em; font-weight: 300; color: #F1ECFA;">Zed</div>
+    <div style="font-size: 17px; line-height: 1.5; color: #A69DBE; max-width: 720px;">A panda helmet, a visor, and two lights. Every colour and the eye proportions are tweakable from the chips above this artboard. States and sizes live on the two artboards below.</div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;">
+    <sc-for list="{{grounds}}" as="g" hint-placeholder-count="3">
+      <div style="position: relative; height: 300px; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: {{g.bg}}; border: 1px solid {{g.border}};">
+        <svg viewBox="0 0 120 120" width="200" height="200" role="img" aria-label="Zed, idle">
+          <circle cx="27" cy="29" r="{{earR}}" fill="{{visor}}" stroke="{{edge}}" stroke-width="1.2"></circle>
+          <circle cx="93" cy="29" r="{{earR}}" fill="{{visor}}" stroke="{{edge}}" stroke-width="1.2"></circle>
+          <path d="M19 24 Q23 17 31 16" stroke="#ffffff" stroke-width="2.6" fill="none" opacity="0.3" stroke-linecap="round"></path>
+          <path d="M85 24 Q89 17 97 16" stroke="#ffffff" stroke-width="2.6" fill="none" opacity="0.3" stroke-linecap="round"></path>
+          <circle cx="60" cy="64" r="44" fill="{{shell}}" stroke="{{edge}}" stroke-width="1.2"></circle>
+          <rect x="24" y="44" width="72" height="46" rx="23" fill="{{visor}}" stroke="#0E0A16" stroke-width="1.2"></rect>
+          <g fill="{{eye}}" style="filter: drop-shadow(0 0 3px {{glow}});">
+            <rect x="{{eyeX1}}" y="{{eyeY}}" width="{{eyeW}}" height="{{eyeH}}" rx="{{eyeRx}}"></rect>
+            <rect x="{{eyeX2}}" y="{{eyeY}}" width="{{eyeW}}" height="{{eyeH}}" rx="{{eyeRx}}"></rect>
+          </g>
+          <path d="M32 54 Q38 47 52 47" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.35" stroke-linecap="round"></path>
+        </svg>
+        <div style="position: absolute; left: 14px; bottom: 12px; font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: {{g.label}};">{{g.name}}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;">
+    <div style="background: #15121F; border: 1px solid #2A2438; border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+      <div style="font-size: 14px; font-weight: 500; color: #F1ECFA;">Colours</div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: #A69DBE;"><div style="width: 34px; height: 34px; border-radius: 9px; background: {{shell}}; border: 1px solid rgba(255,255,255,0.12);"></div><div><div style="color: #F1ECFA; font-weight: 500;">Shell</div><div style="font-family: 'Geist Mono', monospace; font-size: 11px;">{{shell}}</div></div></div>
+        <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: #A69DBE;"><div style="width: 34px; height: 34px; border-radius: 9px; background: {{edge}}; border: 1px solid rgba(255,255,255,0.12);"></div><div><div style="color: #F1ECFA; font-weight: 500;">Shell edge</div><div style="font-family: 'Geist Mono', monospace; font-size: 11px;">{{edge}}</div></div></div>
+        <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: #A69DBE;"><div style="width: 34px; height: 34px; border-radius: 9px; background: {{visor}}; border: 1px solid rgba(255,255,255,0.12);"></div><div><div style="color: #F1ECFA; font-weight: 500;">Visor and ear domes</div><div style="font-family: 'Geist Mono', monospace; font-size: 11px;">{{visor}}</div></div></div>
+        <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: #A69DBE;"><div style="width: 34px; height: 34px; border-radius: 9px; background: {{eye}}; border: 1px solid rgba(255,255,255,0.12);"></div><div><div style="color: #F1ECFA; font-weight: 500;">Eyes</div><div style="font-family: 'Geist Mono', monospace; font-size: 11px;">{{eye}}</div></div></div>
+        <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; color: #A69DBE;"><div style="width: 34px; height: 34px; border-radius: 9px; background: {{glow}}; border: 1px solid rgba(255,255,255,0.12);"></div><div><div style="color: #F1ECFA; font-weight: 500;">Eye glow</div><div style="font-family: 'Geist Mono', monospace; font-size: 11px;">{{glow}}</div></div></div>
+      </div>
+    </div>
+    <div style="background: #15121F; border: 1px solid #2A2438; border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; line-height: 1.5; color: #A69DBE;">
+      <div style="font-size: 14px; font-weight: 500; color: #F1ECFA;">Rules</div>
+      <div><span style="color: #F1ECFA; font-weight: 500;">Head, two ears, one visor. Nothing else.</span> No antenna, collar or body. Anything below the helmet breaks under 24px.</div>
+      <div><span style="color: #F1ECFA; font-weight: 500;">Ears are the same glass as the visor,</span> drawn behind the head so only the domes show.</div>
+      <div><span style="color: #F1ECFA; font-weight: 500;">Outline scales with size.</span> About one device pixel at 16px, two at 48px and above.</div>
+      <div><span style="color: #F1ECFA; font-weight: 500;">Eyes do all the expression.</span> Idle, thinking, answered, error, resting. Nothing else on the character moves.</div>
+      <div><span style="color: #F1ECFA; font-weight: 500;">Eyes are {{eyeW}} wide by {{eyeH}} tall</span> in a 120-unit frame. At 32px and under they grow by one unit in width and two in height.</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"shell":{"editor":"color","default":"#F3EEFA","section":"Colours"},"edge":{"editor":"color","default":"#B29CDB","section":"Colours"},"visor":{"editor":"color","default":"#1A1326","section":"Colours"},"eye":{"editor":"color","default":"#D9B3FF","section":"Colours"},"glow":{"editor":"color","default":"#B75FFF","section":"Colours"},"eyeW":{"editor":"int","default":10,"min":6,"max":16,"section":"Eyes"},"eyeH":{"editor":"int","default":15,"min":6,"max":26,"section":"Eyes"},"earR":{"editor":"int","default":16,"min":10,"max":22,"section":"Shape"},"$preview":{"width":1200,"height":920}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const shell = p.shell ?? '#F3EEFA', edge = p.edge ?? '#B29CDB', visor = p.visor ?? '#1A1326';
+    const eye = p.eye ?? '#D9B3FF', glow = p.glow ?? '#B75FFF';
+    const eyeW = Number(p.eyeW ?? 10), eyeH = Number(p.eyeH ?? 15), earR = Number(p.earR ?? 16);
+    return {
+      shell, edge, visor, eye, glow, eyeW, eyeH, earR,
+      eyeY: 67 - eyeH / 2, eyeX1: 45 - eyeW / 2, eyeX2: 75 - eyeW / 2, eyeRx: eyeW / 2,
+      grounds: [
+        { name: 'White', bg: '#FFFFFF', border: '#DDD3EC', label: '#665C7A' },
+        { name: 'Lavender fade', bg: 'radial-gradient(60% 120% at 12% 0%, rgba(232,160,235,0.55) 0%, transparent 70%), radial-gradient(50% 120% at 88% 100%, rgba(146,0,225,0.10) 0%, transparent 70%), linear-gradient(90deg, #EAC6EC 0%, #D7C8EF 45%, #E6E0F5 78%, #F6F3FB 100%)', border: '#DDD3EC', label: '#665C7A' },
+        { name: 'Dark', bg: '#0B0A12', border: '#2A2438', label: '#A69DBE' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
