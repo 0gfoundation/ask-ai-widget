@@ -68,6 +68,29 @@ The widget owns every colour, size and face in both themes so answers render the
 
 Nothing else on the page reaches inside the widget: its utilities are emitted with `!important` and every element markdown can produce is pinned to the widget's own values.
 
+## Zed
+
+Zed is the character on the trigger, in the panel header, next to every answer, and in the error notice. It is one parametric SVG, exported from this package so any 0G site can use the same drawing:
+
+```tsx
+import { Zed } from "@0gfoundation/ask-ai-widget";
+
+<Zed state="idle" size={32} />
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `state` | `"idle" \| "thinking" \| "answered" \| "error" \| "resting"` | `"idle"` | Only the eyes change between states. |
+| `size` | `number` | `32` | Outline and eye size are computed from this, so 16px is not a shrunken 96px. |
+| `animate` | `boolean` | `true` | Idle blink and thinking bounce. Off under `prefers-reduced-motion` regardless. |
+| `title` | `string` | `"Zed"` | Accessible name. |
+
+`ZED_COLORS`, `ZED_STATES`, `zedStrokeWidth` and `zedEyeBox` are exported for hosts that need to draw or match the character elsewhere.
+
+Static assets live in `assets/zed/`: one SVG per state, `favicon.svg` (small-size geometry), and PNGs at 16, 32, 180 and 512 for the Safari favicon, apple-touch-icon and maskable icon. They are regenerated from the component with `npm run build && npm run export:zed`, so the icons are never a separate drawing.
+
+Design reference: the "Meet Zed" board and the Claude Design character sheet (ask the 0G Builders team for links). This component is the production source of truth; copy tuned values from the canvas into `src/zed/Zed.tsx`.
+
 ## Docusaurus integration
 
 In `src/theme/Root.tsx`:
