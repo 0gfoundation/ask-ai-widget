@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import MessageList from "./MessageList";
 import ChatComposer from "./ChatComposer";
 import ChatStateNotices from "./ChatStateNotices";
+import { Zed } from "../zed/Zed";
 import { TurnstileBox, type TurnstileBoxHandle } from "./TurnstileBox";
 import type {
   ChatErrorCode,
@@ -242,9 +243,10 @@ export default function ChatPanel({
       >
         {messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-6 px-6 py-8">
+            <Zed state="idle" size={72} />
             <div className="text-center">
               <h2 className="mb-2 text-xl font-semibold tracking-tight text-[var(--aai-fg)]">
-                Ask anything about 0G
+                Ask Zed anything about 0G
               </h2>
               <p className="text-xs text-[var(--aai-fg-muted)]">
                 Powered by 0G Compute. Answers with citations.

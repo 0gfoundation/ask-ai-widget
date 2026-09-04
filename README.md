@@ -1,6 +1,6 @@
 # @0gfoundation/ask-ai-widget
 
-A floating Ask AI chatbot for any React site. Backed by 0G Compute. Drop it into Docusaurus, Next.js, Vite, or anywhere React renders. Inherits the same prompt, RAG knowledge index, and guardrails as `build.0g.ai/ask`.
+Ask Zed: a floating chatbot for any React site, fronted by Zed, the 0G character. Backed by 0G Compute. Drop it into Docusaurus, Next.js, Vite, or anywhere React renders. Inherits the same prompt, RAG knowledge index, and guardrails as `build.0g.ai/ask`.
 
 ## Install
 
@@ -33,7 +33,7 @@ export default function App() {
 }
 ```
 
-That's it. The widget renders a floating purple chat button in the bottom-right. Click it to talk to the bot.
+That's it. The widget renders a floating "Ask Zed" button in the bottom-right, ink on light themes and paper on dark. Click it to talk to Zed.
 
 ## Full page
 
@@ -126,7 +126,7 @@ export default function Root({ children }) {
 | `initialOpen` | `boolean` | `false` | Open on first mount. Otherwise restores from sessionStorage. |
 | `maximizeHref` | `string` | hidden | Adds a maximize button in the panel header linking to a full-page chat (see `ChatPage`). |
 | `storageKey` | `string \| null` | `"ask-ai-widget:conversation"` | localStorage namespace for the conversation. Pass `null` to disable persistence. |
-| `triggerLabel` | `string` | `"Ask AI"` | aria-label on the closed-state button. |
+| `triggerLabel` | `string` | `"Ask Zed"` | Label on the closed-state button. |
 | `starterQuestions` | `string[]` | a 0G-focused set | Empty array hides them. |
 | `branding` | `boolean` | `true` | Show the "Powered by 0G Compute" footer. |
 

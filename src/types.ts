@@ -104,14 +104,14 @@ export interface AskAIWidgetProps {
   storageKey?: string | null;
 
   /**
-   * Tooltip shown on the floating button before the panel opens.
-   * Default: `"Ask AI"`.
+   * Label on the floating button before the panel opens.
+   * Default: `"Ask Zed"`.
    */
   triggerLabel?: string;
 
   /**
-   * Trigger appearance. `"bubble"` is the classic round chat button;
-   * `"pill"` renders a labeled pill (sparkle icon + `triggerLabel` text)
+   * Trigger appearance. `"bubble"` is a round button showing Zed;
+   * `"pill"` renders a labeled pill (Zed + `triggerLabel` text)
    * for hosts that treat Ask AI as a first-class action.
    * Default: `"bubble"`.
    */

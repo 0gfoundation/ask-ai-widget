@@ -69,7 +69,7 @@ function Demo() {
 
   return (
     <div className="page">
-      <h1>Ask AI Widget — Demo</h1>
+      <h1>Ask Zed Widget — Demo</h1>
       <p>
         This page is for local development. The floating button in the
         bottom-right opens the widget. Tweak the controls below to test
