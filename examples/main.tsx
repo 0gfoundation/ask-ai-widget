@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
-import { AskAIWidget } from "../src";
+import { AskAIWidget, ChatPage } from "../src";
 import type { WidgetTheme } from "../src/types";
 import "../src/styles/widget.css";
 
@@ -9,6 +9,10 @@ function Demo() {
   const [theme, setTheme] = useState<WidgetTheme>("auto");
   const [accent, setAccent] = useState("#B75FFF");
   const [initialOpen, setInitialOpen] = useState(false);
+  // ?layout=page opens the full-page layout directly, for previews and screenshots.
+  const [layout, setLayout] = useState<"widget" | "page">(() =>
+    new URLSearchParams(window.location.search).get("layout") === "page" ? "page" : "widget",
+  );
 
   // Local dev points at the running Builder Hub instance.
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api/chat";
@@ -25,6 +29,13 @@ function Demo() {
       </p>
 
       <div className="controls">
+        <label>
+          Layout
+          <select value={layout} onChange={(e) => setLayout(e.target.value as "widget" | "page")}>
+            <option value="widget">floating widget</option>
+            <option value="page">full page</option>
+          </select>
+        </label>
         <label>
           Theme
           <select value={theme} onChange={(e) => setTheme(e.target.value as WidgetTheme)}>
@@ -55,6 +66,26 @@ function Demo() {
         </p>
       </div>
 
+      {layout === "widget" ? (
+        <AskAIWidget
+          key={`${theme}-${accent}-${initialOpen}`}
+          apiUrl={apiUrl}
+          turnstileSiteKey={turnstileSiteKey}
+          theme={theme}
+          accent={accent}
+          initialOpen={initialOpen}
+        />
+      ) : (
+        <div className="fullpage">
+          <ChatPage
+            apiUrl={apiUrl}
+            turnstileSiteKey={turnstileSiteKey}
+            theme={theme}
+            accent={accent}
+            style={{ borderRadius: 16, border: "1px solid var(--aai-border)" }}
+          />
+        </div>
+      )}
       <p>
         Try long-form scrolling. The widget panel manages its own scroll
         region and shouldn't interfere with this page's scroll.
@@ -68,14 +99,6 @@ function Demo() {
         </p>
       ))}
 
-      <AskAIWidget
-        key={`${theme}-${accent}-${initialOpen}`}
-        apiUrl={apiUrl}
-        turnstileSiteKey={turnstileSiteKey}
-        theme={theme}
-        accent={accent}
-        initialOpen={initialOpen}
-      />
     </div>
   );
 }

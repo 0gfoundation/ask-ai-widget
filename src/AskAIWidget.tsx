@@ -2,15 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { Maximize2, MessageCircle, Sparkles, X } from "lucide-react";
 import ChatPanel from "./components/ChatPanel";
-import { ThemeProvider, useThemeResolver } from "./theme";
+import { ThemeProvider, useThemeResolver, accentVars } from "./theme";
+import { DEFAULT_ACCENT, DEFAULT_STARTERS, DEFAULT_STORAGE_KEY } from "./defaults";
 import type { AskAIWidgetProps } from "./types";
-
-const DEFAULT_STARTERS = [
-  "What is 0G?",
-  "What can I build with the 0G stack?",
-  "How do I get started as a builder?",
-  "How do I get 0G tokens?",
-];
 
 const OPEN_STATE_KEY = "ask-ai-widget:open";
 
@@ -30,25 +24,17 @@ function useIsDesktop(): boolean {
   return isDesktop;
 }
 
-function applyAccentVars(accent: string): React.CSSProperties {
-  // Cast to React.CSSProperties so TS accepts the custom prop names.
-  return {
-    "--aai-accent": accent,
-    "--aai-accent-text": accent,
-  } as React.CSSProperties;
-}
-
 export function AskAIWidget({
   apiUrl,
   turnstileSiteKey,
   theme = "auto",
-  accent = "#B75FFF",
+  accent = DEFAULT_ACCENT,
   position = "bottom-right",
   initialOpen = false,
   open: openProp,
   onOpenChange,
   maximizeHref,
-  storageKey = "ask-ai-widget:conversation",
+  storageKey = DEFAULT_STORAGE_KEY,
   triggerVariant = "bubble",
   triggerLabel = "Ask AI",
   starterQuestions = DEFAULT_STARTERS,
@@ -134,7 +120,7 @@ export function AskAIWidget({
       <div
         data-ask-ai-widget
         data-theme={resolvedTheme}
-        style={applyAccentVars(accent)}
+        style={accentVars(accent)}
         className="aai-root"
       >
         {/* Floating trigger button. Stays visible at all times so the panel

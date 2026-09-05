@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 import type { WidgetTheme } from "./types";
 
 /**
@@ -41,4 +42,15 @@ export function useThemeResolver(prop: WidgetTheme): "light" | "dark" {
   }, [prop]);
 
   return resolved;
+}
+
+/**
+ * Custom properties that carry the accent colour into the scoped stylesheet.
+ * Cast so TS accepts the custom prop names.
+ */
+export function accentVars(accent: string): CSSProperties {
+  return {
+    "--aai-accent": accent,
+    "--aai-accent-text": accent,
+  } as CSSProperties;
 }
