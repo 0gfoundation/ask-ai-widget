@@ -34,6 +34,7 @@ env:
   VERCEL_PROJECT_ID: prj_Jg3G3MMR5jVHSPOWWmgX4E1njZVl
   VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
   PREVIEW_DOMAIN: ask-zed-widget.0g.ai
+  VERCEL_SCOPE: 0g-frontend
 
 jobs:
   deploy:
@@ -92,7 +93,7 @@ jobs:
 
       - name: Alias
         run: |
-          npx vercel alias set "${{ steps.deploy.outputs.url }}" "${{ steps.target.outputs.host }}" --token="$VERCEL_TOKEN"
+          npx vercel alias set "${{ steps.deploy.outputs.url }}" "${{ steps.target.outputs.host }}" --scope="$VERCEL_SCOPE" --token="$VERCEL_TOKEN"
           echo "https://${{ steps.target.outputs.host }}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Comment on the PR
@@ -113,4 +114,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Remove the PR alias
-        run: npx vercel alias rm "pr-${{ github.event.pull_request.number }}.${PREVIEW_DOMAIN}" --yes --token="$VERCEL_TOKEN" || true
+        run: npx vercel alias rm "pr-${{ github.event.pull_request.number }}.${PREVIEW_DOMAIN}" --yes --scope="$VERCEL_SCOPE" --token="$VERCEL_TOKEN" || true
