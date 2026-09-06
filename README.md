@@ -123,6 +123,19 @@ VITE_TURNSTILE_SITE_KEY=0x4AAAAAAA_your_key \
 npm run dev:demo
 ```
 
+## Previews
+
+Every push to main, every pull request and every tag deploys the demo to the ask-zed-widget Vercel project (`.github/workflows/preview.yml`):
+
+| What | Where | Who can open it |
+|---|---|---|
+| main | `https://main.ask-zed-widget.0g.ai` | Vercel team login |
+| PR N | `https://pr-N.ask-zed-widget.0g.ai` | Vercel team login |
+| tag vX.Y.Z | `https://vX-Y-Z.ask-zed-widget.0g.ai` | public, kept permanently |
+| latest tag | `https://ask-zed-widget.0g.ai` | public |
+
+The demo talks to the real chat backend at `https://0g.ai/zed/api/chat`. Each hostname is its own origin, so previews don't share a saved conversation.
+
 ## Build
 
 ```bash

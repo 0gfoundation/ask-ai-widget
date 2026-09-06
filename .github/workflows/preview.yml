@@ -1,0 +1,117 @@
+name: Deploy demo previews
+
+# Deploys the demo in examples/ to the ask-zed-widget Vercel project so a
+# widget build can be reviewed at a predictable hostname:
+#
+#   push to main      -> main.ask-zed-widget.0g.ai     (preview deployment, Vercel login)
+#   pull request      -> pr-N.ask-zed-widget.0g.ai     (preview deployment, Vercel login)
+#   tag vX.Y.Z        -> vX-Y-Z.ask-zed-widget.0g.ai   (production deployment, public)
+#                        ask-zed-widget.0g.ai          (production domain, follows the latest tag)
+#
+# The project's deployment protection is set to "preview deployments only",
+# which is what makes tags public and everything else team-only. Tag
+# hostnames are explicit aliases, so they keep pointing at their own
+# deployment when a newer tag ships; only the apex moves.
+#
+# The build runs the package build first (tsup + dts), so a broken package
+# build fails the preview before the demo is even bundled.
+#
+# Needs one repository secret: VERCEL_TOKEN (a token for the 0g-frontend team).
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERCEL_ORG_ID: team_kwmSdDdNT08bwyo0NvRR9b6P
+  VERCEL_PROJECT_ID: prj_Jg3G3MMR5jVHSPOWWmgX4E1njZVl
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  PREVIEW_DOMAIN: ask-zed-widget.0g.ai
+  VERCEL_SCOPE: 0g-frontend
+
+jobs:
+  deploy:
+    # Fork PRs have no access to the token, so they are skipped rather than failed.
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Work out the target
+        id: target
+        run: |
+          case "${{ github.event_name }}/${{ github.ref_type }}" in
+            push/tag)
+              name="$(echo "${{ github.ref_name }}" | tr . -)"
+              echo "host=${name}.${PREVIEW_DOMAIN}" >> "$GITHUB_OUTPUT"
+              echo "environment=production" >> "$GITHUB_OUTPUT"
+              echo "prod_flag=--prod" >> "$GITHUB_OUTPUT"
+              ;;
+            push/branch)
+              echo "host=main.${PREVIEW_DOMAIN}" >> "$GITHUB_OUTPUT"
+              echo "environment=preview" >> "$GITHUB_OUTPUT"
+              echo "prod_flag=" >> "$GITHUB_OUTPUT"
+              ;;
+            pull_request/*)
+              echo "host=pr-${{ github.event.pull_request.number }}.${PREVIEW_DOMAIN}" >> "$GITHUB_OUTPUT"
+              echo "environment=preview" >> "$GITHUB_OUTPUT"
+              echo "prod_flag=" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+
+      - name: Pull Vercel project settings
+        run: npx vercel pull --yes --environment=${{ steps.target.outputs.environment }} --token="$VERCEL_TOKEN"
+
+      - name: Build (package, then demo)
+        run: npx vercel build ${{ steps.target.outputs.prod_flag }} --token="$VERCEL_TOKEN"
+
+      - name: Deploy
+        id: deploy
+        run: |
+          url="$(npx vercel deploy --prebuilt ${{ steps.target.outputs.prod_flag }} --token="$VERCEL_TOKEN")"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployed $url"
+
+      - name: Alias
+        run: |
+          npx vercel alias set "${{ steps.deploy.outputs.url }}" "${{ steps.target.outputs.host }}" --scope="$VERCEL_SCOPE" --token="$VERCEL_TOKEN"
+          echo "https://${{ steps.target.outputs.host }}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment on the PR
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          body="Demo preview: https://${{ steps.target.outputs.host }} (Vercel team login). Updated for ${{ github.event.pull_request.head.sha }}."
+          existing="$(gh pr view ${{ github.event.pull_request.number }} --json comments --jq '.comments[] | select(.body | startswith("Demo preview:")) | .id' | head -1)"
+          if [ -n "$existing" ]; then
+            gh api graphql -f query='mutation($id: ID!, $body: String!) { updateIssueComment(input: {id: $id, body: $body}) { issueComment { id } } }' -f id="$existing" -f body="$body" >/dev/null
+          else
+            gh pr comment ${{ github.event.pull_request.number }} --body "$body"
+          fi
+
+  cleanup:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove the PR alias
+        run: npx vercel alias rm "pr-${{ github.event.pull_request.number }}.${PREVIEW_DOMAIN}" --yes --scope="$VERCEL_SCOPE" --token="$VERCEL_TOKEN" || true
