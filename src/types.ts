@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 export type ChatRole = "user" | "assistant";
 
 export interface ChatMessage {
@@ -125,4 +127,37 @@ export interface AskAIWidgetProps {
    * Show the "Powered by 0G Compute" footer line. Default: `true`.
    */
   branding?: boolean;
+}
+
+export interface ChatPageProps {
+  /** The backend `/api/chat` endpoint URL. See `AskAIWidgetProps.apiUrl`. */
+  apiUrl: string;
+
+  /** Cloudflare Turnstile site key. See `AskAIWidgetProps.turnstileSiteKey`. */
+  turnstileSiteKey: string;
+
+  /** Visual theme. `"auto"` follows `prefers-color-scheme`. Default: `"auto"`. */
+  theme?: WidgetTheme;
+
+  /** CSS color for the primary accent. Default: `#B75FFF`. */
+  accent?: string;
+
+  /**
+   * localStorage key for the conversation. Use the same key as the floating
+   * widget on the same origin and the conversation carries between them.
+   * Pass `null` to disable persistence. Default: `"ask-ai-widget:conversation"`.
+   */
+  storageKey?: string | null;
+
+  /** Starter questions for the empty state. Empty array hides them. */
+  starterQuestions?: string[];
+
+  /** Show the "Powered by 0G Compute" footer line. Default: `true`. */
+  branding?: boolean;
+
+  /** Extra classes on the root, e.g. a border and radius from the host. */
+  className?: string;
+
+  /** Inline styles on the root, merged over the defaults. */
+  style?: CSSProperties;
 }

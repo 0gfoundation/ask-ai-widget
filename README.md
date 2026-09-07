@@ -35,6 +35,30 @@ export default function App() {
 
 That's it. The widget renders a floating purple chat button in the bottom-right. Click it to talk to the bot.
 
+## Full page
+
+`ChatPage` is the same chat with no trigger, header or positioning, for a dedicated route like `build.0g.ai/ask`. It fills its container, so give the parent a height. Mount it with the same `storageKey` as the floating widget on the same origin and the conversation follows between the two.
+
+```tsx
+import { ChatPage } from "@0gfoundation/ask-ai-widget";
+
+export default function AskPage() {
+  return (
+    <div style={{ height: "80vh" }}>
+      <ChatPage
+        apiUrl="https://build.0g.ai/api/chat"
+        turnstileSiteKey="0x4AAAAAAA_your_key"
+        style={{ borderRadius: 16, border: "1px solid #E5E5E5" }}
+      />
+    </div>
+  );
+}
+```
+
+It takes `apiUrl`, `turnstileSiteKey`, `theme`, `accent`, `storageKey`, `starterQuestions` and `branding` with the same meaning as the widget, plus `className` and `style` on the root for the host's own border, radius or sizing.
+
+Pair the two with `maximizeHref` on the widget pointing at the page's route and the popup header gets a maximize button.
+
 ## Docusaurus integration
 
 In `src/theme/Root.tsx`:
@@ -68,6 +92,7 @@ export default function Root({ children }) {
 | `accent` | `string` | `"#B75FFF"` | CSS color for primary buttons and accents. |
 | `position` | `"bottom-right" \| "bottom-left"` | `"bottom-right"` | Corner the floating button anchors to. |
 | `initialOpen` | `boolean` | `false` | Open on first mount. Otherwise restores from sessionStorage. |
+| `maximizeHref` | `string` | hidden | Adds a maximize button in the panel header linking to a full-page chat (see `ChatPage`). |
 | `storageKey` | `string \| null` | `"ask-ai-widget:conversation"` | localStorage namespace for the conversation. Pass `null` to disable persistence. |
 | `triggerLabel` | `string` | `"Ask AI"` | aria-label on the closed-state button. |
 | `starterQuestions` | `string[]` | a 0G-focused set | Empty array hides them. |
