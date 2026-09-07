@@ -95,7 +95,7 @@ export default function ChatComposer({
             onClick={handleClearClick}
             aria-label={confirmingClear ? "Click again to confirm clearing the chat" : "Clear chat"}
             title={confirmingClear ? "Click again to confirm" : "Clear chat"}
-            className={`absolute left-0 top-0 inline-flex h-11 items-center justify-center gap-2 rounded-xl border bg-[var(--aai-bg-card)] transition-all ${
+            className={`absolute right-0 top-0 inline-flex h-11 items-center justify-center gap-2 rounded-xl border bg-[var(--aai-bg-card)] transition-all ${
               confirmingClear
                 ? "border-[var(--aai-accent)] px-3 text-[var(--aai-accent-text)] shadow-[var(--aai-shadow)] z-10"
                 : "w-11 border-[var(--aai-border)] text-[var(--aai-fg-muted)] hover:border-[var(--aai-hover-border)] hover:text-[var(--aai-fg)]"
