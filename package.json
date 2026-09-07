@@ -1,7 +1,7 @@
 {
   "name": "@0gfoundation/ask-ai-widget",
   "version": "0.3.6",
-  "description": "Floating Ask AI widget for any React site. Backed by 0G Compute, ships with theming, Turnstile bot protection, and conversation persistence.",
+  "description": "Floating Ask Zed widget for any React site, plus the Zed character component. Backed by 0G Compute, ships with theming, Turnstile bot protection, and conversation persistence.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -16,6 +16,7 @@
   },
   "files": [
     "dist",
+    "assets",
     "README.md",
     "LICENSE"
   ],
@@ -27,7 +28,8 @@
     "dev:demo": "vite",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "export:zed": "node scripts/export-zed.mjs"
   },
   "keywords": [
     "0g",
@@ -36,7 +38,9 @@
     "widget",
     "react",
     "rag",
-    "docusaurus"
+    "docusaurus",
+    "zed",
+    "mascot"
   ],
   "author": "0G Labs",
   "license": "MIT",

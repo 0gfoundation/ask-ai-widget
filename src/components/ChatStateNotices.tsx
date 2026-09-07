@@ -1,4 +1,4 @@
-import { AlertCircle } from "lucide-react";
+import { Zed } from "../zed/Zed";
 import type { ChatErrorCode } from "../types";
 
 const FRIENDLY: Record<ChatErrorCode, string> = {
@@ -24,7 +24,7 @@ export default function ChatStateNotices({ error, onDismiss }: ChatStateNoticesP
   const text = error.message || FRIENDLY[error.code];
   return (
     <div className="mx-4 mb-2 flex items-start gap-2 rounded-xl border border-[var(--aai-border)] bg-[var(--aai-bg-card)] px-3 py-2 text-sm text-[var(--aai-fg-muted)]">
-      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--aai-accent-text)]" />
+      <Zed state="error" size={24} className="-mt-0.5 shrink-0" />
       <p className="flex-1">{text}</p>
       <button
         onClick={onDismiss}

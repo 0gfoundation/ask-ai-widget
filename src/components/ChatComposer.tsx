@@ -65,7 +65,7 @@ export default function ChatComposer({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
-        placeholder={placeholder ?? "Ask anything about 0G..."}
+        placeholder={placeholder ?? "Ask Zed anything about 0G..."}
         rows={1}
         disabled={disabled && !streaming}
         className="flex-1 resize-none overflow-y-auto rounded-xl border border-[var(--aai-border)] bg-[var(--aai-bg-card)] px-4 py-3 text-sm leading-6 text-[var(--aai-fg)] placeholder:text-[var(--aai-fg-subtle)] focus:border-[var(--aai-accent)] focus:outline-none disabled:opacity-60"

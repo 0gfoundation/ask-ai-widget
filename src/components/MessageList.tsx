@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import MessageBubble from "./MessageBubble";
+import { Zed } from "../zed/Zed";
 import type { ChatMessage } from "../types";
 
 interface MessageListProps {
@@ -44,9 +45,18 @@ export default function MessageList({
           m.suggestions.length > 0;
         return (
           <div key={i} className="flex flex-col gap-2">
-            <MessageBubble message={m} />
+            {m.role === "assistant" ? (
+              <div className="flex items-start gap-2">
+                <Zed state="idle" size={28} className="mt-1 shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <MessageBubble message={m} />
+                </div>
+              </div>
+            ) : (
+              <MessageBubble message={m} />
+            )}
             {showSuggestions && (
-              <div className="flex flex-wrap gap-2 pl-1">
+              <div className="flex flex-wrap gap-2 pl-9">
                 {m.suggestions!.map((s) => (
                   <button
                     key={s}
@@ -64,16 +74,10 @@ export default function MessageList({
         );
       })}
       {awaitingFirstDelta && (
-        <div className="flex justify-start">
-          <div className="rounded-2xl border border-[var(--aai-border)] bg-[var(--aai-bg-card)] px-4 py-3">
-            <div className="flex items-center gap-2 text-xs text-[var(--aai-fg-muted)]">
-              <span className="italic">Thinking</span>
-              <span className="flex items-center gap-1">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--aai-fg-muted)]" />
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--aai-fg-muted)] [animation-delay:120ms]" />
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--aai-fg-muted)] [animation-delay:240ms]" />
-              </span>
-            </div>
+        <div className="flex items-start gap-2">
+          <Zed state="thinking" size={28} className="mt-1 shrink-0" />
+          <div className="rounded-2xl border border-[var(--aai-border)] bg-[var(--aai-bg-card)] px-4 py-3 text-xs italic text-[var(--aai-fg-muted)]">
+            Thinking
           </div>
         </div>
       )}

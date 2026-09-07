@@ -19,3 +19,18 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+Zed character
+
+The MIT licence above covers the code in this repository. It does not cover
+the Zed character: the character design, name and likeness, the rendered
+artwork in assets/zed/, the design source in brand/zed/, and the drawing
+embodied in src/zed/Zed.tsx. These are copyright (c) 2026 0G Labs, all rights
+reserved, and Zed is a brand asset of 0G.
+
+You may display Zed as rendered by this widget and its Zed component on a
+site that embeds them. Any other use of the character, including modified
+versions, other mascots derived from it, or use to suggest 0G endorsement,
+needs written permission from 0G Labs.

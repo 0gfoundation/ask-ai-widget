@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; background: #0B0A12; color: #F1ECFA; font-family: "Geist", "Helvetica Neue", Arial, sans-serif; font-weight: 300; }
+    a { color: #C98BFF; } a:hover { color: #E3C1FF; }
+  </style>
+</helmet>
+<div style="width: 1200px; min-height: 560px; box-sizing: border-box; padding: 40px 48px; background: #0B0A12; display: flex; flex-direction: column; gap: 24px;">
+  <div style="display: flex; flex-direction: column; gap: 6px;">
+    <div style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #C98BFF; font-weight: 500;">02 · Expressions</div>
+    <div style="font-size: 34px; line-height: 1.1; letter-spacing: -0.02em; font-weight: 300; color: #F1ECFA;">Five states cover every moment in a chat</div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px;">
+    <sc-for list="{{states}}" as="st" hint-placeholder-count="5">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 18px 8px 14px; border-radius: 14px; background: radial-gradient(60% 120% at 12% 0%, rgba(232,160,235,0.55) 0%, transparent 70%), linear-gradient(90deg, #EAC6EC 0%, #D7C8EF 45%, #E6E0F5 78%, #F6F3FB 100%); border: 1px solid #DDD3EC;">
+        <svg viewBox="0 0 120 120" width="96" height="96" role="img" aria-label="Zed">
+          <circle cx="27" cy="29" r="16" fill="{{visor}}" stroke="{{edge}}" stroke-width="2.5"></circle>
+          <circle cx="93" cy="29" r="16" fill="{{visor}}" stroke="{{edge}}" stroke-width="2.5"></circle>
+          <circle cx="60" cy="64" r="44" fill="{{shell}}" stroke="{{edge}}" stroke-width="2.5"></circle>
+          <rect x="24" y="44" width="72" height="46" rx="23" fill="{{visor}}" stroke="#0E0A16" stroke-width="2.5"></rect>
+          <g fill="{{eye}}" stroke="{{eye}}" style="filter: drop-shadow(0 0 3px {{glow}});">
+            <sc-if value="{{st.idle}}" hint-placeholder-val="{{true}}">
+              <rect x="{{eyeX1}}" y="{{eyeY}}" width="{{eyeW}}" height="{{eyeH}}" rx="{{eyeRx}}" stroke="none"></rect>
+              <rect x="{{eyeX2}}" y="{{eyeY}}" width="{{eyeW}}" height="{{eyeH}}" rx="{{eyeRx}}" stroke="none"></rect>
+            </sc-if>
+            <sc-if value="{{st.thinking}}" hint-placeholder-val="{{false}}">
+              <circle cx="45" cy="67" r="3.6" stroke="none"></circle>
+              <circle cx="60" cy="67" r="3.6" stroke="none"></circle>
+              <circle cx="75" cy="67" r="3.6" stroke="none"></circle>
+            </sc-if>
+            <sc-if value="{{st.answered}}" hint-placeholder-val="{{false}}">
+              <path d="M38 70 Q45 60 52 70" fill="none" stroke-width="4.4" stroke-linecap="round"></path>
+              <path d="M68 70 Q75 60 82 70" fill="none" stroke-width="4.4" stroke-linecap="round"></path>
+            </sc-if>
+            <sc-if value="{{st.error}}" hint-placeholder-val="{{false}}">
+              <path d="M38.5 60.5 L51.5 73.5 M51.5 60.5 L38.5 73.5" fill="none" stroke-width="4.2" stroke-linecap="round"></path>
+              <path d="M68.5 60.5 L81.5 73.5 M81.5 60.5 L68.5 73.5" fill="none" stroke-width="4.2" stroke-linecap="round"></path>
+            </sc-if>
+            <sc-if value="{{st.resting}}" hint-placeholder-val="{{false}}">
+              <rect x="38" y="67" width="14" height="4.5" rx="2.25" stroke="none" opacity="0.85"></rect>
+              <rect x="68" y="67" width="14" height="4.5" rx="2.25" stroke="none" opacity="0.85"></rect>
+            </sc-if>
+          </g>
+          <path d="M32 54 Q38 47 52 47" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.35" stroke-linecap="round"></path>
+        </svg>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: #141020;">{{st.name}}</div>
+        <div style="font-size: 12px; color: #665C7A; text-align: center; max-width: 18ch;">{{st.use}}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 10px; font-size: 14px; line-height: 1.5; color: #A69DBE; max-width: 760px;">
+    <div><span style="color: #F1ECFA; font-weight: 500;">Idle</span> blinks every few seconds. <span style="color: #F1ECFA; font-weight: 500;">Thinking</span> bounces the three dots in sequence while the answer streams. <span style="color: #F1ECFA; font-weight: 500;">Answered</span> holds for a moment after the reply completes, then returns to idle. <span style="color: #F1ECFA; font-weight: 500;">Error</span> reads as broken, not annoyed. <span style="color: #F1ECFA; font-weight: 500;">Resting</span> is the collapsed launcher before anyone has opened the chat.</div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{"shell":{"editor":"color","default":"#F3EEFA","section":"Colours"},"edge":{"editor":"color","default":"#B29CDB","section":"Colours"},"visor":{"editor":"color","default":"#1A1326","section":"Colours"},"eye":{"editor":"color","default":"#D9B3FF","section":"Colours"},"glow":{"editor":"color","default":"#B75FFF","section":"Colours"},"eyeW":{"editor":"int","default":10,"min":6,"max":16,"section":"Eyes"},"eyeH":{"editor":"int","default":15,"min":6,"max":26,"section":"Eyes"},"$preview":{"width":1200,"height":560}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const eyeW = Number(p.eyeW ?? 10), eyeH = Number(p.eyeH ?? 15);
+    return {
+      shell: p.shell ?? '#F3EEFA', edge: p.edge ?? '#B29CDB', visor: p.visor ?? '#1A1326',
+      eye: p.eye ?? '#D9B3FF', glow: p.glow ?? '#B75FFF',
+      eyeW, eyeH, eyeY: 67 - eyeH / 2, eyeX1: 45 - eyeW / 2, eyeX2: 75 - eyeW / 2, eyeRx: eyeW / 2,
+      states: [
+        { name: 'idle', use: 'Waiting for a question', idle: true, thinking: false, answered: false, error: false, resting: false },
+        { name: 'thinking', use: 'Retrieving and streaming', idle: false, thinking: true, answered: false, error: false, resting: false },
+        { name: 'answered', use: 'Reply complete', idle: false, thinking: false, answered: true, error: false, resting: false },
+        { name: 'error', use: 'Rate limit, failure, captcha', idle: false, thinking: false, answered: false, error: true, resting: false },
+        { name: 'resting', use: 'Collapsed launcher', idle: false, thinking: false, answered: false, error: false, resting: true },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

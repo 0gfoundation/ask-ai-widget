@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { Maximize2, MessageCircle, Sparkles, X } from "lucide-react";
+import { Maximize2, X } from "lucide-react";
+import { Zed } from "./zed/Zed";
 import ChatPanel from "./components/ChatPanel";
 import { ThemeProvider, useThemeResolver, accentVars } from "./theme";
 import { DEFAULT_ACCENT, DEFAULT_STARTERS, DEFAULT_STORAGE_KEY } from "./defaults";
@@ -36,7 +37,7 @@ export function AskAIWidget({
   maximizeHref,
   storageKey = DEFAULT_STORAGE_KEY,
   triggerVariant = "bubble",
-  triggerLabel = "Ask AI",
+  triggerLabel = "Ask Zed",
   starterQuestions = DEFAULT_STARTERS,
   branding = true,
 }: AskAIWidgetProps) {
@@ -97,6 +98,14 @@ export function AskAIWidget({
 
   const toggle = useCallback(() => setOpen((v) => !v), []);
 
+  // The trigger carries the character, so it takes an ink or paper ground
+  // that flips with the theme rather than the accent colour: Zed's purple
+  // eyes need a neutral behind them to read.
+  const triggerStyle: CSSProperties =
+    resolvedTheme === "dark"
+      ? { backgroundColor: "#F1ECFA", color: "#141020" }
+      : { backgroundColor: "#141020", color: "#FFFFFF" };
+
   // Trigger sits 1rem from its corner; the desktop panel stacks directly
   // above it (same corner) with a small gap, so the trigger is never covered.
   const triggerCornerClass =
@@ -131,24 +140,24 @@ export function AskAIWidget({
           <button
             type="button"
             onClick={toggle}
-            aria-label={open ? "Close Ask AI" : triggerLabel}
+            aria-label={open ? "Close Ask Zed" : triggerLabel}
             aria-expanded={open}
-            className={`fixed bottom-4 ${triggerCornerClass} z-[9998] inline-flex h-11 items-center gap-2 rounded-full px-5 text-sm font-semibold text-white shadow-[var(--aai-shadow)] transition-transform duration-200 hover:scale-105 active:scale-95`}
-            style={{ backgroundColor: accent }}
+            className={`fixed bottom-4 ${triggerCornerClass} z-[9998] inline-flex h-12 items-center gap-2 rounded-full pl-2 pr-5 text-sm font-semibold shadow-[var(--aai-shadow)] transition-transform duration-200 hover:scale-105 active:scale-95`}
+            style={triggerStyle}
           >
-            {open ? <X className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
+            {open ? <X className="ml-3 h-4 w-4" /> : <Zed state="resting" size={32} />}
             {triggerLabel}
           </button>
         ) : (
           <button
             type="button"
             onClick={toggle}
-            aria-label={open ? "Close Ask AI" : triggerLabel}
+            aria-label={open ? "Close Ask Zed" : triggerLabel}
             aria-expanded={open}
-            className={`fixed bottom-4 ${triggerCornerClass} z-[9998] inline-flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[var(--aai-shadow)] transition-transform duration-200 hover:scale-105 active:scale-95`}
-            style={{ backgroundColor: accent }}
+            className={`fixed bottom-4 ${triggerCornerClass} z-[9998] inline-flex h-14 w-14 items-center justify-center rounded-full shadow-[var(--aai-shadow)] transition-transform duration-200 hover:scale-105 active:scale-95`}
+            style={triggerStyle}
           >
-            {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+            {open ? <X className="h-6 w-6" /> : <Zed state="resting" size={40} />}
           </button>
         )}
 
@@ -156,7 +165,7 @@ export function AskAIWidget({
             takes over the full viewport for usable text input. */}
         <div
           role="dialog"
-          aria-label="Ask AI"
+          aria-label="Ask Zed"
           aria-hidden={!open}
           style={panelGeometry}
           className={`fixed z-[9999] flex flex-col overflow-hidden bg-[var(--aai-bg)] shadow-[var(--aai-shadow-lg)] transition-all duration-200 ${
@@ -168,14 +177,9 @@ export function AskAIWidget({
           {/* Panel header */}
           <div className="flex shrink-0 items-center justify-between border-b border-[var(--aai-border)] bg-[var(--aai-bg)] px-4 py-3">
             <div className="flex items-center gap-2">
-              <span
-                className="inline-flex h-7 w-7 items-center justify-center rounded-full"
-                style={{ backgroundColor: accent }}
-              >
-                <MessageCircle className="h-4 w-4 text-white" />
-              </span>
+              <Zed state="idle" size={28} />
               <span className="text-sm font-semibold text-[var(--aai-fg)]">
-                Ask AI
+                Ask Zed
               </span>
             </div>
             <div className="flex items-center gap-1">

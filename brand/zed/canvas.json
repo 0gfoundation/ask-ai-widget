@@ -1,0 +1,11 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1200, "h": 920, "title": "Character sheet" },
+    { "file": "Sizes.dc.html", "x": 0, "y": 1060, "w": 1200, "h": 640, "title": "Sizes" },
+    { "file": "States.dc.html", "x": 0, "y": 1840, "w": 1200, "h": 560, "title": "Expressions" }
+  ],
+  "annotations": [
+    { "id": "how-to-tune", "x": 1280, "y": 0, "w": 300, "text": "Tweak chips above each artboard change the colours and eye proportions. Each artboard has its own set, so change all three to keep them in step.\n\nThe React component in the ask-ai-widget repo is the source of truth for production. Copy final values there." }
+  ],
+  "launch": { "view": "canvas" }
+}

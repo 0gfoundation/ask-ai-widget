@@ -1,6 +1,6 @@
 # @0gfoundation/ask-ai-widget
 
-A floating Ask AI chatbot for any React site. Backed by 0G Compute. Drop it into Docusaurus, Next.js, Vite, or anywhere React renders. Inherits the same prompt, RAG knowledge index, and guardrails as `build.0g.ai/ask`.
+Ask Zed: a floating chatbot for any React site, fronted by Zed, the 0G character. Backed by 0G Compute. Drop it into Docusaurus, Next.js, Vite, or anywhere React renders. Inherits the same prompt, RAG knowledge index, and guardrails as `build.0g.ai/ask`.
 
 ## Install
 
@@ -33,7 +33,7 @@ export default function App() {
 }
 ```
 
-That's it. The widget renders a floating purple chat button in the bottom-right. Click it to talk to the bot.
+That's it. The widget renders a floating "Ask Zed" button in the bottom-right, ink on light themes and paper on dark. Click it to talk to Zed.
 
 ## Full page
 
@@ -67,6 +67,29 @@ The widget owns every colour, size and face in both themes so answers render the
 - `--aai-font-sans` and `--aai-font-mono`, CSS custom properties, to use the host's own faces instead of the system stacks.
 
 Nothing else on the page reaches inside the widget: its utilities are emitted with `!important` and every element markdown can produce is pinned to the widget's own values.
+
+## Zed
+
+Zed is the character on the trigger, in the panel header, next to every answer, and in the error notice. It is one parametric SVG, exported from this package so any 0G site can use the same drawing:
+
+```tsx
+import { Zed } from "@0gfoundation/ask-ai-widget";
+
+<Zed state="idle" size={32} />
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `state` | `"idle" \| "thinking" \| "answered" \| "error" \| "resting"` | `"idle"` | Only the eyes change between states. |
+| `size` | `number` | `32` | Outline and eye size are computed from this, so 16px is not a shrunken 96px. |
+| `animate` | `boolean` | `true` | Idle blink and thinking bounce. Off under `prefers-reduced-motion` regardless. |
+| `title` | `string` | `"Zed"` | Accessible name. |
+
+`ZED_COLORS`, `ZED_STATES`, `zedStrokeWidth` and `zedEyeBox` are exported for hosts that need to draw or match the character elsewhere.
+
+Static assets live in `assets/zed/`: one SVG per state, `favicon.svg` (small-size geometry), and PNGs at 16, 32, 180 and 512 for the Safari favicon, apple-touch-icon and maskable icon. They are regenerated from the component with `npm run build && npm run export:zed`, so the icons are never a separate drawing.
+
+Design reference: the "Meet Zed" board and the Claude Design character sheet (ask the 0G Builders team for links). This component is the production source of truth; copy tuned values from the canvas into `src/zed/Zed.tsx`.
 
 ## Docusaurus integration
 
@@ -103,7 +126,7 @@ export default function Root({ children }) {
 | `initialOpen` | `boolean` | `false` | Open on first mount. Otherwise restores from sessionStorage. |
 | `maximizeHref` | `string` | hidden | Adds a maximize button in the panel header linking to a full-page chat (see `ChatPage`). |
 | `storageKey` | `string \| null` | `"ask-ai-widget:conversation"` | localStorage namespace for the conversation. Pass `null` to disable persistence. |
-| `triggerLabel` | `string` | `"Ask AI"` | aria-label on the closed-state button. |
+| `triggerLabel` | `string` | `"Ask Zed"` | Label on the closed-state button. |
 | `starterQuestions` | `string[]` | a 0G-focused set | Empty array hides them. |
 | `branding` | `boolean` | `true` | Show the "Powered by 0G Compute" footer. |
 
@@ -185,4 +208,4 @@ Emits to `dist/`:
 
 ## License
 
-MIT
+The code is MIT. The Zed character is not: the design, name and likeness, the artwork in `assets/zed/`, the design source in `brand/zed/`, and the drawing in `src/zed/Zed.tsx` are copyright 0G Labs, all rights reserved. You can display Zed as the widget and the `Zed` component render him on a site that embeds them. Anything else, including modified versions or derived mascots, needs permission from 0G Labs. See [LICENSE](LICENSE).
