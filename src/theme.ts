@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import type { WidgetTheme } from "./types";
+import { deriveAccentColors } from "./contrast";
 
 /**
  * Internal theme context. The AskAIWidget provider wraps children with a
@@ -48,9 +49,14 @@ export function useThemeResolver(prop: WidgetTheme): "light" | "dark" {
  * Custom properties that carry the accent colour into the scoped stylesheet.
  * Cast so TS accepts the custom prop names.
  */
-export function accentVars(accent: string): CSSProperties {
+export function accentVars(accent: string, theme: "light" | "dark"): CSSProperties {
+  // The accent the host passes is adjusted per theme so filled surfaces,
+  // the text on them, and accent-coloured text all stay legible. See
+  // contrast.ts for the rules.
+  const c = deriveAccentColors(accent, theme);
   return {
-    "--aai-accent": accent,
-    "--aai-accent-text": accent,
+    "--aai-accent": c.surface,
+    "--aai-accent-fg": c.onSurface,
+    "--aai-accent-text": c.text,
   } as CSSProperties;
 }

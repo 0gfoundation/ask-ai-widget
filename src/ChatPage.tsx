@@ -29,7 +29,7 @@ export function ChatPage({
   // Geometry is inline for the same reason as the widget panel: host
   // Tailwind bundles can override the widget's utility classes.
   const rootStyle: CSSProperties = {
-    ...accentVars(accent),
+    ...accentVars(accent, resolvedTheme),
     display: "flex",
     flexDirection: "column",
     height: "100%",

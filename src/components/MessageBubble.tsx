@@ -40,7 +40,7 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
       <div
         className={`min-w-0 max-w-[92%] overflow-hidden rounded-2xl px-4 py-3 text-sm leading-relaxed sm:max-w-[88%] ${
           isUser
-            ? "bg-[var(--aai-accent)] text-white"
+            ? "bg-[var(--aai-accent)] text-[var(--aai-accent-fg)]"
             : "bg-[var(--aai-bg-card)] border border-[var(--aai-border)] text-[var(--aai-fg-muted)]"
         }`}
       >

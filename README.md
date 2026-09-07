@@ -59,6 +59,15 @@ It takes `apiUrl`, `turnstileSiteKey`, `theme`, `accent`, `storageKey`, `starter
 
 Pair the two with `maximizeHref` on the widget pointing at the page's route and the popup header gets a maximize button.
 
+## Theming contract
+
+The widget owns every colour, size and face in both themes so answers render the same on every host. A host can influence three things, all on the widget root:
+
+- `accent`, adjusted as described in the props table.
+- `--aai-font-sans` and `--aai-font-mono`, CSS custom properties, to use the host's own faces instead of the system stacks.
+
+Nothing else on the page reaches inside the widget: its utilities are emitted with `!important` and every element markdown can produce is pinned to the widget's own values.
+
 ## Docusaurus integration
 
 In `src/theme/Root.tsx`:
@@ -89,7 +98,7 @@ export default function Root({ children }) {
 | `apiUrl` | `string` | required | The `/api/chat` endpoint URL. |
 | `turnstileSiteKey` | `string` | required | Register your hostname in the Cloudflare Turnstile dashboard. |
 | `theme` | `"light" \| "dark" \| "auto"` | `"auto"` | `auto` follows `prefers-color-scheme`. |
-| `accent` | `string` | `"#B75FFF"` | CSS color for primary buttons and accents. |
+| `accent` | `string` | `"#B75FFF"` | CSS color for the send button, user bubbles and links. Adjusted per theme where needed so it stays legible: filled surfaces reach 3:1 and accent text 4.5:1 against the widget background, and text on filled surfaces is ink or white, whichever reads better. |
 | `position` | `"bottom-right" \| "bottom-left"` | `"bottom-right"` | Corner the floating button anchors to. |
 | `initialOpen` | `boolean` | `false` | Open on first mount. Otherwise restores from sessionStorage. |
 | `maximizeHref` | `string` | hidden | Adds a maximize button in the panel header linking to a full-page chat (see `ChatPage`). |
