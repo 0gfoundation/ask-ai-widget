@@ -6,7 +6,11 @@ import type { WidgetTheme } from "../src/types";
 import "../src/styles/widget.css";
 
 function Demo() {
-  const [theme, setTheme] = useState<WidgetTheme>("auto");
+  // ?theme=light|dark presets the theme, for previews and screenshots.
+  const [theme, setTheme] = useState<WidgetTheme>(() => {
+    const t = new URLSearchParams(window.location.search).get("theme");
+    return t === "light" || t === "dark" ? t : "auto";
+  });
   const [accent, setAccent] = useState("#B75FFF");
   const [initialOpen, setInitialOpen] = useState(false);
   // ?layout=page opens the full-page layout directly, for previews and screenshots.
