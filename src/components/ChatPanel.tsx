@@ -288,7 +288,7 @@ export default function ChatPanel({
             streaming={isStreaming}
           />
           {branding && (
-            <p className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--aai-accent-text)]">
+            <p className="mt-2 text-center font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--aai-accent-text)]">
               Powered by 0G Compute
             </p>
           )}

@@ -49,8 +49,7 @@ export function useThemeResolver(prop: WidgetTheme): "light" | "dark" {
  * Cast so TS accepts the custom prop names.
  */
 export function accentVars(accent: string): CSSProperties {
-  return {
-    "--aai-accent": accent,
-    "--aai-accent-text": accent,
-  } as CSSProperties;
+  // --aai-accent-text is derived per theme in widget.css, so it stays
+  // readable on either ground whatever accent the host passes.
+  return { "--aai-accent": accent } as CSSProperties;
 }
