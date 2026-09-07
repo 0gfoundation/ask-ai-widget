@@ -112,7 +112,7 @@ export interface AskAIWidgetProps {
   /**
    * Trigger appearance. `"bubble"` is a round button showing Zed;
    * `"pill"` renders a labeled pill (Zed + `triggerLabel` text)
-   * for hosts that treat Ask AI as a first-class action.
+   * for hosts that treat Ask Zed as a first-class action.
    * Default: `"bubble"`.
    */
   triggerVariant?: "bubble" | "pill";
