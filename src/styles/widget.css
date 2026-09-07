@@ -41,11 +41,11 @@
   --aai-fg-subtle: rgba(10, 10, 10, 0.62);
   --aai-border: #E5E5E5;
   --aai-accent: #B75FFF;
-  /* Text on accent-filled surfaces (user bubbles). Ink reads on the default
-     purple in both themes; a host with a dark accent sets this to a light colour. */
+  /* --aai-accent, --aai-accent-fg and --aai-accent-text are set inline per
+     theme from the accent prop (see contrast.ts); these are the defaults for
+     the default purple. */
   --aai-accent-fg: #141020;
-  /* Text-sized accent: dark enough to read on the light ground whatever accent a host passes. */
-  --aai-accent-text: color-mix(in oklab, var(--aai-accent) 62%, black);
+  --aai-accent-text: #7800BA;
   --aai-hover-surface: rgba(10, 10, 10, 0.04);
   --aai-hover-border: rgba(10, 10, 10, 0.12);
   --aai-code-bg: #FAFAFA;
@@ -63,7 +63,7 @@
   --aai-border: #1A1A1A;
   --aai-accent: #B75FFF;
   --aai-accent-fg: #141020;
-  --aai-accent-text: color-mix(in oklab, var(--aai-accent) 88%, white);
+  --aai-accent-text: #B75FFF;
   --aai-hover-surface: rgba(255, 255, 255, 0.05);
   --aai-hover-border: rgba(255, 255, 255, 0.20);
   --aai-code-bg: #000000;

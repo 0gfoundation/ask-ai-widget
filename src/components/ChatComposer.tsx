@@ -84,7 +84,7 @@ export default function ChatComposer({
           onClick={onSubmit}
           disabled={disabled || value.trim().length === 0}
           aria-label="Send"
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--aai-accent)] text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--aai-accent)] text-[var(--aai-accent-fg)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <Send className="h-4 w-4" />
         </button>
