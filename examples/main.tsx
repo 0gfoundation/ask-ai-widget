@@ -53,7 +53,9 @@ function Demo() {
     const t = new URLSearchParams(window.location.search).get("theme");
     return t === "light" || t === "dark" ? t : "auto";
   });
-  const [accent, setAccent] = useState("#B75FFF");
+  const [accent, setAccent] = useState(
+    () => new URLSearchParams(window.location.search).get("accent") || "#B75FFF",
+  );
   const [initialOpen, setInitialOpen] = useState(false);
   // ?layout=page opens the full-page layout directly, for previews and screenshots.
   const [layout, setLayout] = useState<"widget" | "page">(() =>

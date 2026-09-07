@@ -120,7 +120,7 @@ export function AskAIWidget({
       <div
         data-ask-ai-widget
         data-theme={resolvedTheme}
-        style={accentVars(accent)}
+        style={accentVars(accent, resolvedTheme)}
         className="aai-root"
       >
         {/* Floating trigger button. Stays visible at all times so the panel
