@@ -5,6 +5,48 @@ import { AskAIWidget, ChatPage } from "../src";
 import type { WidgetTheme } from "../src/types";
 import "../src/styles/widget.css";
 
+const SAMPLE_CONVERSATION = [
+  { role: "user", content: "What is 0G?" },
+  {
+    role: "assistant",
+    content: [
+      "## What is 0G?",
+      "",
+      "0G (Zero Gravity) is a **modular, decentralized AI L1 blockchain** built as infrastructure for on-chain AI. It combines three products:",
+      "",
+      "| Product | What it does | Key specs |",
+      "|---|---|---|",
+      "| 0G Chain | EVM-compatible L1 with CometBFT consensus | Sub-second finality, chain ID 16661 |",
+      "| 0G Storage | Log and key-value layers for large data | 30+ MB/s retrieval |",
+      "| 0G Compute | GPU marketplace with an OpenAI-compatible endpoint | `router-api.0g.ai/v1` |",
+      "",
+      "- Deploy contracts with Hardhat or Foundry against `https://evmrpc-testnet.0g.ai`",
+      "- Store model weights and datasets on 0G Storage",
+      "- Call any model through the router:",
+      "",
+      "```ts",
+      "const client = new OpenAI({ baseURL: \"https://router-api.0g.ai/v1\", apiKey: process.env.ZG_API_KEY });",
+      "```",
+      "",
+      "**Read more**",
+      "",
+      "- https://docs.0g.ai",
+      "- https://build.0g.ai",
+    ].join("\n"),
+    suggestions: ["How do I deploy a contract?", "What does 0G Storage cost?"],
+  },
+];
+
+// ?sample=1 seeds a markdown-heavy conversation so answer rendering can be
+// reviewed in either theme without spending tokens. Clear chat removes it.
+if (new URLSearchParams(window.location.search).get("sample") === "1") {
+  try {
+    window.localStorage.setItem("ask-ai-widget:conversation", JSON.stringify(SAMPLE_CONVERSATION));
+  } catch {
+    // storage blocked
+  }
+}
+
 function Demo() {
   // ?theme=light|dark presets the theme, for previews and screenshots.
   const [theme, setTheme] = useState<WidgetTheme>(() => {
