@@ -41,7 +41,7 @@ export type WidgetPosition = "bottom-right" | "bottom-left";
 export interface AskAIWidgetProps {
   /**
    * The backend `/api/chat` endpoint URL. Must return the NDJSON chunk
-   * protocol this widget consumes. Example: `https://build.0g.ai/api/chat`.
+   * protocol this widget consumes. Example: `https://0g.ai/zed/api/chat`.
    */
   apiUrl: string;
 

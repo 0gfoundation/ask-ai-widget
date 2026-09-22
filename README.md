@@ -1,16 +1,18 @@
 # @0gfoundation/ask-ai-widget
 
-A floating Ask AI chatbot for any React site. Backed by 0G Compute. Drop it into Docusaurus, Next.js, Vite, or anywhere React renders. Inherits the same prompt, RAG knowledge index, and guardrails as `build.0g.ai/ask`.
+A floating Ask AI chatbot for any React site. Backed by 0G Compute. Drop it into Docusaurus, Next.js, Vite, or anywhere React renders.
+
+It talks to the shared chat backend at `https://0g.ai/zed/api/chat` ([0gfoundation/zed](https://github.com/0gfoundation/zed)), which owns the system prompt, the RAG knowledge index, the rate limits and the guardrails. Every consumer — `docs.0g.ai`, `build.0g.ai`, this repo's own demo — gets the same answers from the same index.
 
 ## Install
 
 This package is distributed directly from GitHub, not the npm registry. The package's `prepare` script builds the bundle on install, so no manual build step is needed on the consumer side.
 
 ```bash
-npm install github:0gfoundation/ask-ai-widget#v0.1.0
+npm install github:0gfoundation/ask-ai-widget#v0.3.6
 ```
 
-Pin to a tag in production (`#v0.1.0`). For tracking the bleeding edge, use the branch: `npm install github:0gfoundation/ask-ai-widget#main`.
+Pin to a tag in production (`#v0.3.6` is the current one). For tracking the bleeding edge, use the branch: `npm install github:0gfoundation/ask-ai-widget#main`.
 
 The imported package name is still `@0gfoundation/ask-ai-widget` since that's what's declared in the package's own `package.json` — the install URL just controls where the code comes from.
 
@@ -25,7 +27,7 @@ export default function App() {
     <>
       {/* your app */}
       <AskAIWidget
-        apiUrl="https://build.0g.ai/api/chat"
+        apiUrl="https://0g.ai/zed/api/chat"
         turnstileSiteKey="0x4AAAAAAA_your_key"
       />
     </>
@@ -46,7 +48,7 @@ export default function AskPage() {
   return (
     <div style={{ height: "80vh" }}>
       <ChatPage
-        apiUrl="https://build.0g.ai/api/chat"
+        apiUrl="https://0g.ai/zed/api/chat"
         turnstileSiteKey="0x4AAAAAAA_your_key"
         style={{ borderRadius: 16, border: "1px solid #E5E5E5" }}
       />
@@ -82,7 +84,7 @@ export default function Root({ children }) {
     <>
       {children}
       <AskAIWidget
-        apiUrl="https://build.0g.ai/api/chat"
+        apiUrl="https://0g.ai/zed/api/chat"
         turnstileSiteKey={process.env.TURNSTILE_SITE_KEY}
         theme="auto"
       />
@@ -100,6 +102,8 @@ export default function Root({ children }) {
 | `theme` | `"light" \| "dark" \| "auto"` | `"auto"` | `auto` follows `prefers-color-scheme`. |
 | `accent` | `string` | `"#B75FFF"` | CSS color for the send button, user bubbles and links. Adjusted per theme where needed so it stays legible: filled surfaces reach 3:1 and accent text 4.5:1 against the widget background, and text on filled surfaces is ink or white, whichever reads better. |
 | `position` | `"bottom-right" \| "bottom-left"` | `"bottom-right"` | Corner the floating button anchors to. |
+| `triggerVariant` | `"bubble" \| "pill"` | `"bubble"` | `bubble` is the round chat button; `pill` is a labeled pill for hosts that treat Ask AI as a first-class action. |
+| `open` / `onOpenChange` | `boolean` / `(open: boolean) => void` | uncontrolled | Pass both to drive the panel from the host (a nav pill, say). `onOpenChange` also fires uncontrolled, as a notification. |
 | `initialOpen` | `boolean` | `false` | Open on first mount. Otherwise restores from sessionStorage. |
 | `maximizeHref` | `string` | hidden | Adds a maximize button in the panel header linking to a full-page chat (see `ChatPage`). |
 | `storageKey` | `string \| null` | `"ask-ai-widget:conversation"` | localStorage namespace for the conversation. Pass `null` to disable persistence. |
@@ -115,7 +119,7 @@ The widget hits an `/api/chat` endpoint that needs to:
 2. Accept the Turnstile token issued for that hostname.
 3. Return the NDJSON stream chunks documented under [Protocol](#protocol).
 
-If you're embedding on `docs.0g.ai`, add `docs.0g.ai` to the Turnstile widget hostnames in the Cloudflare dashboard. Without that, every request returns `turnstile`.
+For the 0G backend, both lists live in [0gfoundation/zed](https://github.com/0gfoundation/zed): origins in `ALLOWED_ORIGINS` / `ALLOWED_ORIGIN_SUFFIXES`, and the Turnstile hostnames on the shared site key in the Cloudflare dashboard. Without the hostname, every request returns `turnstile`; without the origin, the request is refused before it reaches the model.
 
 ## Protocol
 
@@ -147,12 +151,27 @@ npm install
 npm run dev:demo
 ```
 
-Opens `http://localhost:5173`. By default it points at `http://localhost:3000/api/chat` (a locally-running Builder Hub) and uses the always-pass Turnstile test key.
+Opens `http://localhost:5173`. By default it points at `http://localhost:3000/zed/api/chat` (a locally-running [zed](https://github.com/0gfoundation/zed), which serves under `basePath: "/zed"`) and uses Cloudflare's always-pass Turnstile test key.
+
+The demo mounts both exports at once — the floating widget in the corner, `ChatPage` embedded in the page — and drives them from one set of controls. Every control is mirrored in the query string, so a link carries the state you are looking at:
+
+| Parameter | What it does |
+|---|---|
+| `?layout=` | `both` (default), `widget` or `page` — which mounts render. |
+| `?theme=` | `auto`, `light` or `dark`. The demo page follows it too. |
+| `?accent=` | Any CSS colour, URL-encoded (`%23B75FFF` for `#B75FFF`). |
+| `?variant=` | `bubble` or `pill`. |
+| `?position=` | `bottom-right` or `bottom-left`. |
+| `?label=` | The trigger's label. |
+| `?branding=0` | Hide the branding footer. |
+| `?starters=0` | Hide the starter questions. |
+| `?maximize=1` | Show the panel's maximize button. |
+| `?sample=1` | Seed a markdown-heavy conversation, for reviewing answer rendering without spending tokens. |
 
 To target a deployed backend instead:
 
 ```bash
-VITE_API_URL=https://build.0g.ai/api/chat \
+VITE_API_URL=https://0g.ai/zed/api/chat \
 VITE_TURNSTILE_SITE_KEY=0x4AAAAAAA_your_key \
 npm run dev:demo
 ```
