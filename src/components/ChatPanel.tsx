@@ -68,6 +68,7 @@ export default function ChatPanel({
 
   const turnstileRef = useRef<TurnstileBoxHandle>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Restore conversation from localStorage on mount.
   useEffect(() => {
@@ -233,6 +234,7 @@ export default function ChatPanel({
       {/* Scrollable message region. data-lenis-prevent stops smooth-scroll
           libraries on the host page from hijacking wheel events here. */}
       <div
+        ref={scrollRef}
         data-lenis-prevent
         className="flex-1 overflow-y-auto"
         style={{
@@ -266,6 +268,7 @@ export default function ChatPanel({
           </div>
         ) : (
           <MessageList
+            scrollRef={scrollRef}
             messages={messages}
             awaitingFirstDelta={awaitingFirstDelta}
             onSuggestionClick={(text) => send(text)}
