@@ -10,8 +10,9 @@ import "./demo.css";
 
 // This page is the widget's showcase as well as its dev harness: every push
 // deploys it to a hostname under ask-zed-widget.0g.ai, and tags are public.
-// So it mounts both exports side by side, drives them from real props, and
-// keeps every control in the URL so a reviewer can link to a given state.
+// So it mounts both exports, drives them from real props through one set of
+// controls, and keeps every control in the URL so a reviewer can link to the
+// exact state they are describing.
 
 // Each mount gets its own conversation key so the two on this page can't
 // overwrite each other's history. A real site shares one key between its
@@ -52,7 +53,7 @@ const SAMPLE_CONVERSATION = [
 ];
 
 const ACCENT_PRESETS: { value: string; label: string }[] = [
-  { value: "#B75FFF", label: "0G Hero Purple (the default)" },
+  { value: "#B75FFF", label: "0G Hero Purple — the default" },
   { value: "#000000", label: "Black — derived lighter so filled surfaces stay visible" },
   { value: "#FFFFFF", label: "White — derived darker on the light theme" },
   { value: "#0EA5E9", label: "Sky" },
@@ -136,6 +137,18 @@ function writeState(state: DemoState): void {
   window.history.replaceState(null, "", query ? `?${query}` : window.location.pathname);
 }
 
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
+  useEffect(() => {
+    const mql = window.matchMedia(query);
+    const onChange = () => setMatches(mql.matches);
+    onChange();
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, [query]);
+  return matches;
+}
+
 function useSystemTheme(): "light" | "dark" {
   const [dark, setDark] = useState(
     () => window.matchMedia("(prefers-color-scheme: dark)").matches,
@@ -175,38 +188,106 @@ if (new URLSearchParams(window.location.search).get("sample") === "1") {
   seed([WIDGET_STORAGE_KEY, PAGE_STORAGE_KEY]);
 }
 
-function Snippet({ title, code }: { title: string; code: string }) {
-  const [copied, setCopied] = useState(false);
-  const copy = useCallback(() => {
-    navigator.clipboard?.writeText(code).then(
-      () => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      },
-      () => setCopied(false),
-    );
-  }, [code]);
+const STORAGE_KEYS = [WIDGET_STORAGE_KEY, PAGE_STORAGE_KEY];
 
+/** A button whose label flips to a confirmation for a moment after it runs. */
+function ActionButton({
+  label,
+  done,
+  onRun,
+  primary,
+}: {
+  label: string;
+  done: string;
+  onRun: () => void;
+  primary?: boolean;
+}) {
+  const [ran, setRan] = useState(false);
+  useEffect(() => {
+    if (!ran) return;
+    const t = setTimeout(() => setRan(false), 1400);
+    return () => clearTimeout(t);
+  }, [ran]);
   return (
-    <div>
+    <button
+      type="button"
+      className={primary ? "btn btn-primary" : "btn"}
+      onClick={() => {
+        onRun();
+        setRan(true);
+      }}
+    >
+      {ran ? done : label}
+    </button>
+  );
+}
+
+function Segmented<T extends string>({
+  legend,
+  value,
+  options,
+  onChange,
+}: {
+  legend: string;
+  value: T;
+  options: { value: T; label: string }[];
+  onChange: (value: T) => void;
+}) {
+  return (
+    <div className="field">
+      <span className="legend">{legend}</span>
+      <div className="seg" role="group" aria-label={legend}>
+        {options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            aria-pressed={value === option.value}
+            onClick={() => onChange(option.value)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Switch({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <label className="switch">
+      {label}
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+    </label>
+  );
+}
+
+function Snippet({ title, code }: { title: string; code: string }) {
+  return (
+    <>
       <div className="snippet-head">
         <h3>{title}</h3>
-        <button type="button" className="btn" onClick={copy}>
-          {copied ? "Copied" : "Copy"}
-        </button>
+        <ActionButton label="Copy" done="Copied" onRun={() => navigator.clipboard?.writeText(code)} />
       </div>
       <pre className="snippet">
         <code>{code}</code>
       </pre>
-    </div>
+    </>
   );
 }
 
 function widgetSnippet(state: DemoState, apiUrl: string): string {
   const lines = [
-    `<AskAIWidget`,
+    "<AskAIWidget",
     `  apiUrl="${apiUrl}"`,
-    `  turnstileSiteKey={siteKey}`,
+    "  turnstileSiteKey={siteKey}",
     `  theme="${state.theme}"`,
     `  accent="${state.accent}"`,
     `  position="${state.position}"`,
@@ -214,25 +295,25 @@ function widgetSnippet(state: DemoState, apiUrl: string): string {
     `  triggerLabel="${state.label}"`,
     `  storageKey="${WIDGET_STORAGE_KEY}"`,
   ];
-  if (state.maximize) lines.push(`  maximizeHref="#full-page"`);
-  if (!state.starters) lines.push(`  starterQuestions={[]}`);
-  if (!state.branding) lines.push(`  branding={false}`);
-  lines.push(`  open={open}`, `  onOpenChange={setOpen}`, `/>`);
+  if (state.maximize) lines.push('  maximizeHref="#full-page"');
+  if (!state.starters) lines.push("  starterQuestions={[]}");
+  if (!state.branding) lines.push("  branding={false}");
+  lines.push("  open={open}", "  onOpenChange={setOpen}", "/>");
   return lines.join("\n");
 }
 
 function pageSnippet(state: DemoState, apiUrl: string): string {
   const lines = [
-    `<ChatPage`,
+    "<ChatPage",
     `  apiUrl="${apiUrl}"`,
-    `  turnstileSiteKey={siteKey}`,
+    "  turnstileSiteKey={siteKey}",
     `  theme="${state.theme}"`,
     `  accent="${state.accent}"`,
     `  storageKey="${PAGE_STORAGE_KEY}"`,
   ];
-  if (!state.starters) lines.push(`  starterQuestions={[]}`);
-  if (!state.branding) lines.push(`  branding={false}`);
-  lines.push(`  style={{ borderRadius: 16, border: "1px solid var(--aai-border)" }}`, `/>`);
+  if (!state.starters) lines.push("  starterQuestions={[]}");
+  if (!state.branding) lines.push("  branding={false}");
+  lines.push('  style={{ borderRadius: 16, border: "1px solid var(--aai-border)" }}', "/>");
   return lines.join("\n");
 }
 
@@ -247,7 +328,7 @@ export default function App() {
       {/* your app */}
       <AskAIWidget
         apiUrl="https://0g.ai/zed/api/chat"
-        turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+        turnstileSiteKey={siteKey}
       />
     </>
   );
@@ -256,13 +337,13 @@ export default function App() {
 const PARAMS: [string, string][] = [
   ["?layout=", "both (default), widget or page — which mounts render."],
   ["?open=1", "Land with the floating panel already open."],
-  ["?theme=", "auto, light or dark. The demo page follows it too."],
+  ["?theme=", "auto, light or dark. The page follows it too."],
   ["?accent=", "Any CSS colour, URL-encoded (%23B75FFF for #B75FFF)."],
-  ["?variant=", "bubble or pill — the floating trigger's shape."],
+  ["?variant=", "bubble or pill."],
   ["?position=", "bottom-right or bottom-left."],
   ["?label=", "The trigger's label and aria-label."],
-  ["?branding=0", "Hide the Powered by 0G Compute footer."],
-  ["?starters=0", "Hide the starter questions in the empty state."],
+  ["?branding=0", "Hide the branding footer."],
+  ["?starters=0", "Hide the starter questions."],
   ["?maximize=1", "Show the panel's maximize button."],
   ["?sample=1", "Seed a markdown-heavy conversation in both mounts."],
 ];
@@ -274,6 +355,8 @@ function Demo() {
   const [storageToken, setStorageToken] = useState(0);
 
   const systemTheme = useSystemTheme();
+  // Matches the CSS breakpoint where the two columns become one.
+  const narrow = useMediaQuery("(max-width: 62rem)");
   const shellTheme = state.theme === "auto" ? systemTheme : state.theme;
 
   useEffect(() => writeState(state), [state]);
@@ -285,8 +368,6 @@ function Demo() {
   );
 
   const setOpen = useCallback((open: boolean) => set("open", open), [set]);
-
-  const bothKeys = useMemo(() => [WIDGET_STORAGE_KEY, PAGE_STORAGE_KEY], []);
 
   // Local dev points at a zed backend running on port 3000 (basePath /zed).
   // Deployed previews get the real endpoint through VITE_API_URL.
@@ -302,349 +383,337 @@ function Demo() {
 
   const showWidget = state.layout !== "page";
   const showPage = state.layout !== "widget";
+  const corner = state.position.replace("-", " ");
 
-  return (
-    <div className="demo" data-demo-theme={shellTheme}>
-      <header className="wrap masthead">
-        <h1>Ask AI Widget</h1>
-        <p className="lede">
-          Both of the package's chat surfaces, live, driven by the controls
-          below. The floating <code>AskAIWidget</code> sits in the corner of
-          this page; <code>ChatPage</code> is embedded further down. Every
-          control is mirrored in the URL, so a link carries the state you are
-          looking at.
-        </p>
-        <div className="facts">
-          <span className="fact">
-            <b>version</b>
-            <span>{pkg.version}</span>
-          </span>
-          <span className="fact">
-            <b>api</b>
-            <span>{apiUrl}</span>
-          </span>
-          <span className="fact">
-            <b>turnstile</b>
-            <span>{envSiteKey ? "site key from env" : "always-pass test key"}</span>
-          </span>
-          <span className="fact">
-            <b>host</b>
-            <span>{window.location.host}</span>
-          </span>
+  const controls = (
+    <div className="card">
+      <div className="group">
+        <h2>Surfaces</h2>
+        <div className="stack">
+          <Segmented
+            legend="Show"
+            value={state.layout}
+            onChange={(layout) => set("layout", layout)}
+            options={[
+              { value: "both", label: "Both" },
+              { value: "widget", label: "Popup" },
+              { value: "page", label: "Page" },
+            ]}
+          />
+          <Segmented
+            legend="Theme"
+            value={state.theme}
+            onChange={(theme) => set("theme", theme)}
+            options={[
+              { value: "auto", label: "Auto" },
+              { value: "light", label: "Light" },
+              { value: "dark", label: "Dark" },
+            ]}
+          />
         </div>
-      </header>
+      </div>
 
-      <div className="controls">
-        <div className="controls-inner">
-          <label className="field">
-            <span>Layout</span>
-            <select
-              value={state.layout}
-              onChange={(e) => set("layout", e.target.value as Layout)}
-            >
-              <option value="both">both</option>
-              <option value="widget">floating widget</option>
-              <option value="page">full page</option>
-            </select>
-          </label>
+      <div className="group">
+        <h2>Accent</h2>
+        <div className="stack">
+          <div className="accent">
+            <input
+              type="color"
+              aria-label="Accent colour"
+              value={/^#[0-9a-f]{6}$/i.test(state.accent) ? state.accent : "#B75FFF"}
+              onChange={(e) => set("accent", e.target.value)}
+            />
+            <div className="swatches">
+              {ACCENT_PRESETS.map((preset) => (
+                <button
+                  key={preset.value}
+                  type="button"
+                  className="swatch"
+                  title={preset.label}
+                  aria-label={preset.label}
+                  aria-pressed={state.accent.toLowerCase() === preset.value.toLowerCase()}
+                  style={{ background: preset.value }}
+                  onClick={() => set("accent", preset.value)}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="derived" title="Derived per theme by src/contrast.ts">
+            <span title="Filled surfaces">
+              <i style={{ background: derived.surface }} />
+              {derived.surface}
+            </span>
+            <span title="Text on those surfaces">
+              <i style={{ background: derived.onSurface }} />
+              {derived.onSurface}
+            </span>
+            <span title="Accent as text">
+              <i style={{ background: derived.text }} />
+              {derived.text}
+            </span>
+          </div>
+        </div>
+      </div>
 
+      <div className="group">
+        <h2>Trigger</h2>
+        <div className="stack">
+          <Segmented
+            legend="Shape"
+            value={state.variant}
+            onChange={(variant) => set("variant", variant)}
+            options={[
+              { value: "bubble", label: "Bubble" },
+              { value: "pill", label: "Pill" },
+            ]}
+          />
+          <Segmented
+            legend="Corner"
+            value={state.position}
+            onChange={(position) => set("position", position)}
+            options={[
+              { value: "bottom-right", label: "Right" },
+              { value: "bottom-left", label: "Left" },
+            ]}
+          />
           <label className="field">
-            <span>Theme</span>
-            <select
-              value={state.theme}
-              onChange={(e) => set("theme", e.target.value as WidgetTheme)}
-            >
-              <option value="auto">auto (follows OS)</option>
-              <option value="light">light</option>
-              <option value="dark">dark</option>
-            </select>
-          </label>
-
-          <label className="field">
-            <span>Trigger</span>
-            <select
-              value={state.variant}
-              onChange={(e) => set("variant", e.target.value as "bubble" | "pill")}
-            >
-              <option value="bubble">bubble</option>
-              <option value="pill">pill</option>
-            </select>
-          </label>
-
-          <label className="field">
-            <span>Position</span>
-            <select
-              value={state.position}
-              onChange={(e) => set("position", e.target.value as WidgetPosition)}
-            >
-              <option value="bottom-right">bottom-right</option>
-              <option value="bottom-left">bottom-left</option>
-            </select>
-          </label>
-
-          <label className="field">
-            <span>Trigger label</span>
+            <span>Label</span>
             <input
               type="text"
               value={state.label}
               onChange={(e) => set("label", e.target.value)}
             />
           </label>
-
-          <div className="field">
-            <span>Accent</span>
-            <div className="accent-row">
-              <input
-                type="color"
-                aria-label="Accent colour"
-                value={/^#[0-9a-f]{6}$/i.test(state.accent) ? state.accent : "#B75FFF"}
-                onChange={(e) => set("accent", e.target.value)}
-              />
-              <div className="swatches">
-                {ACCENT_PRESETS.map((preset) => (
-                  <button
-                    key={preset.value}
-                    type="button"
-                    className="swatch"
-                    title={preset.label}
-                    aria-label={preset.label}
-                    aria-pressed={state.accent.toLowerCase() === preset.value.toLowerCase()}
-                    style={{ background: preset.value }}
-                    onClick={() => set("accent", preset.value)}
-                  />
-                ))}
-              </div>
-            </div>
-            <div className="derived" title="Derived per theme by src/contrast.ts">
-              <span>
-                <i style={{ background: derived.surface }} />
-                {derived.surface}
-              </span>
-              <span>
-                <i style={{ background: derived.onSurface }} />
-                {derived.onSurface}
-              </span>
-              <span>
-                <i style={{ background: derived.text }} />
-                {derived.text}
-              </span>
-            </div>
-          </div>
-
-          <div className="checks">
-            <label className="check">
-              <input
-                type="checkbox"
-                checked={state.starters}
-                onChange={(e) => set("starters", e.target.checked)}
-              />
-              Starter questions
-            </label>
-            <label className="check">
-              <input
-                type="checkbox"
-                checked={state.branding}
-                onChange={(e) => set("branding", e.target.checked)}
-              />
-              Branding footer
-            </label>
-            <label className="check">
-              <input
-                type="checkbox"
-                checked={state.maximize}
-                onChange={(e) => set("maximize", e.target.checked)}
-              />
-              Maximize button
-            </label>
-          </div>
-
-          <div className="btn-row">
-            {showWidget && (
-              <button type="button" className="btn" onClick={() => setOpen(!state.open)}>
-                {state.open ? "Close the panel" : "Open the panel"}
-              </button>
-            )}
-            <button
-              type="button"
-              className="btn"
-              onClick={() => {
-                seed(bothKeys);
-                setStorageToken((n) => n + 1);
-              }}
-            >
-              Seed a sample answer
-            </button>
-            <button
-              type="button"
-              className="btn"
-              onClick={() => {
-                wipe(bothKeys);
-                setStorageToken((n) => n + 1);
-              }}
-            >
-              Wipe conversations
-            </button>
-            <button
-              type="button"
-              className="btn"
-              onClick={() => setState(DEFAULTS)}
-            >
-              Reset controls
-            </button>
-          </div>
         </div>
       </div>
 
-      <main className="wrap">
-        <section className="section" id="floating-widget">
-          <h2>
-            Floating widget
-            <span className="tag">AskAIWidget</span>
-          </h2>
-          <p>
-            Mounted once, anywhere in the tree. It renders a trigger fixed to
-            the {state.position.replace("-", " ")} corner of this page and a
-            panel that stacks above it — 400&times;600 on desktop, fullscreen
-            on a phone. Here it is controlled, so the button in the controls
-            bar drives <code>open</code> the same way a host's own nav pill
-            would.
+      <div className="group">
+        <h2>Chrome</h2>
+        <div className="stack">
+          <Switch
+            label="Starter questions"
+            checked={state.starters}
+            onChange={(v) => set("starters", v)}
+          />
+          <Switch
+            label="Branding footer"
+            checked={state.branding}
+            onChange={(v) => set("branding", v)}
+          />
+          <Switch
+            label="Maximize button"
+            checked={state.maximize}
+            onChange={(v) => set("maximize", v)}
+          />
+        </div>
+      </div>
+
+      <div className="group">
+        <h2>Actions</h2>
+        <div className="btn-row">
+          <ActionButton
+            label="Copy link"
+            done="Link copied"
+            primary
+            onRun={() => navigator.clipboard?.writeText(window.location.href)}
+          />
+          <ActionButton
+            label="Seed an answer"
+            done="Seeded"
+            onRun={() => {
+              seed(STORAGE_KEYS);
+              setStorageToken((n) => n + 1);
+            }}
+          />
+          <ActionButton
+            label="Clear chat"
+            done="Cleared"
+            onRun={() => {
+              wipe(STORAGE_KEYS);
+              setStorageToken((n) => n + 1);
+            }}
+          />
+          <ActionButton label="Reset" done="Reset" onRun={() => setState(DEFAULTS)} />
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="demo" data-demo-theme={shellTheme}>
+      <div className="wrap">
+        <header className="masthead">
+          <p className="eyebrow">@0gfoundation/ask-ai-widget · v{pkg.version}</p>
+          <h1>The 0G chat, both ways round</h1>
+          <p className="lede">
+            <code>AskAIWidget</code> is a popup that floats over any page.{" "}
+            <code>ChatPage</code> is the same chat with no chrome, sized by its
+            container. Both are live below and share these controls; the URL
+            keeps whatever you set, so a link shows someone exactly what you
+            are seeing.
           </p>
-          {showWidget ? (
-            <div className="stage">
-              <p className="note">
-                The trigger is in the {state.position.replace("-", " ")} corner
-                of the viewport, not in this box.
-                {state.maximize
-                  ? " Its maximize button links to the full page below."
-                  : ""}
+          <div className="facts">
+            <span className="fact">
+              <b>backend</b> <span className="mono">{apiUrl}</span>
+            </span>
+            <span className="fact">
+              <b>turnstile</b>{" "}
+              <span>{envSiteKey ? "site key from env" : "always-pass test key"}</span>
+            </span>
+            <span className="fact">
+              <b>host</b> <span className="mono">{window.location.host}</span>
+            </span>
+          </div>
+        </header>
+
+        <div className="shell">
+          <aside className="sidebar" aria-label="Widget controls">
+            {narrow ? (
+              <details className="disc controls-disc">
+                <summary>Controls</summary>
+                {controls}
+              </details>
+            ) : (
+              controls
+            )}
+          </aside>
+          <main>
+            {showWidget && (
+              <section className="surface" id="popup">
+                <div className="stage-head">
+                  <div>
+                    <h2>Popup</h2>
+                    <p className="sub">
+                      Fixed to the {corner} corner of the viewport, not to this
+                      column — 400×600 on desktop, fullscreen on a phone. Driven
+                      from here through <code>open</code> and{" "}
+                      <code>onOpenChange</code>, the way a host's nav pill would.
+                      {state.maximize && " Maximize jumps to the page below."}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className={state.open ? "btn" : "btn btn-primary"}
+                    onClick={() => setOpen(!state.open)}
+                  >
+                    {state.open ? "Close panel" : "Open panel"}
+                  </button>
+                </div>
+              </section>
+            )}
+
+            {showPage && (
+              <section className="surface" id="full-page">
+                <div className="stage-head">
+                  <div>
+                    <h2>Page</h2>
+                    <p className="sub">
+                      No trigger, no header, no positioning. Fills its
+                      container; this one is 60vh with a border and a radius.
+                    </p>
+                  </div>
+                </div>
+                <div className="chat-frame">
+                  <ChatPage
+                    key={`page-${storageToken}`}
+                    apiUrl={apiUrl}
+                    turnstileSiteKey={turnstileSiteKey}
+                    theme={state.theme}
+                    accent={state.accent}
+                    storageKey={PAGE_STORAGE_KEY}
+                    starterQuestions={state.starters ? undefined : []}
+                    branding={state.branding}
+                    style={{ borderRadius: 16, border: "1px solid var(--aai-border)" }}
+                  />
+                </div>
+                <p className="note">
+                  The two mounts here keep separate conversation keys so they
+                  can't overwrite each other. Give them the same{" "}
+                  <code>storageKey</code> on a real site and one conversation
+                  follows between popup and page.
+                </p>
+              </section>
+            )}
+
+            <details className="disc">
+              <summary>Props in play</summary>
+              <div className="disc-body">
+                {showWidget && <Snippet title="AskAIWidget" code={widgetSnippet(state, apiUrl)} />}
+                {showPage && <Snippet title="ChatPage" code={pageSnippet(state, apiUrl)} />}
+              </div>
+            </details>
+
+            <details className="disc">
+              <summary>Install</summary>
+              <div className="disc-body">
+                <p>
+                  Installed from GitHub rather than npm. The package's{" "}
+                  <code>prepare</code> script builds the bundle, so there is no
+                  build step on the consumer side. Pin a tag in production.
+                </p>
+                <Snippet title="Install" code={INSTALL_SNIPPET} />
+                <Snippet title="Usage" code={USAGE_SNIPPET} />
+              </div>
+            </details>
+
+            <details className="disc">
+              <summary>Link parameters</summary>
+              <div className="disc-body">
+                <p>
+                  Every control writes itself into the query string, so Copy
+                  link carries the state you are looking at. These are the
+                  parameters it can set.
+                </p>
+                <table className="params">
+                  <tbody>
+                    {PARAMS.map(([param, what]) => (
+                      <tr key={param}>
+                        <td>{param}</td>
+                        <td>{what}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </details>
+
+            <details className="disc">
+              <summary>Scroll isolation</summary>
+              <div className="disc-body filler">
+                <p>
+                  The panel manages its own scroll region and marks it{" "}
+                  <code>data-lenis-prevent</code>, so a smooth-scroll library
+                  on the host page can't hijack the wheel over it. Open the
+                  panel, put the cursor inside it and scroll: this page should
+                  stay exactly where it is. Mounting a saved conversation
+                  shouldn't move the page either.
+                </p>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <p key={i}>
+                    Filler paragraph {i + 1}. Lorem ipsum dolor sit amet,
+                    consectetur adipiscing elit. Sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua. Ut enim ad
+                    minim veniam, quis nostrud exercitation ullamco laboris nisi
+                    ut aliquip ex ea commodo consequat.
+                  </p>
+                ))}
+              </div>
+            </details>
+
+            <footer className="foot">
+              <p>
+                <a href="https://github.com/0gfoundation/ask-ai-widget">
+                  0gfoundation/ask-ai-widget
+                </a>{" "}
+                — every push to main, every pull request and every tag deploys
+                this page to its own hostname under{" "}
+                <code>ask-zed-widget.0g.ai</code>. Each hostname is its own
+                origin, so previews never share a saved conversation.
               </p>
-              <button type="button" className="btn" onClick={() => setOpen(true)}>
-                Open it
-              </button>
-            </div>
-          ) : (
-            <div className="stage">
-              <p className="note">Not mounted — the layout is set to full page only.</p>
-            </div>
-          )}
-          <Snippet title="Props in play" code={widgetSnippet(state, apiUrl)} />
-        </section>
-
-        <section className="section" id="full-page">
-          <h2>
-            Full page
-            <span className="tag">ChatPage</span>
-          </h2>
-          <p>
-            The same chat with no trigger, header or positioning. It fills its
-            container, so the host decides the size and the frame — this one is
-            capped at 70vh with a border and a radius. Give it the same{" "}
-            <code>storageKey</code> as the floating widget on the same origin
-            and one conversation follows between the two.
-          </p>
-          {showPage ? (
-            <div className="frame">
-              <ChatPage
-                key={`page-${storageToken}`}
-                apiUrl={apiUrl}
-                turnstileSiteKey={turnstileSiteKey}
-                theme={state.theme}
-                accent={state.accent}
-                storageKey={PAGE_STORAGE_KEY}
-                starterQuestions={state.starters ? undefined : []}
-                branding={state.branding}
-                style={{ borderRadius: 16, border: "1px solid var(--aai-border)" }}
-              />
-            </div>
-          ) : (
-            <div className="stage">
-              <p className="note">
-                Not mounted — the layout is set to the floating widget only.
-              </p>
-            </div>
-          )}
-          <p className="note">
-            The two mounts on this page use separate storage keys so they can't
-            overwrite each other's history.
-          </p>
-          <Snippet title="Props in play" code={pageSnippet(state, apiUrl)} />
-        </section>
-
-        <section className="section">
-          <h2>Install</h2>
-          <p>
-            The package is installed from GitHub, not npm. Its{" "}
-            <code>prepare</code> script builds the bundle, so consumers need no
-            build step. Pin a tag in production.
-          </p>
-          <Snippet title="Install" code={INSTALL_SNIPPET} />
-          <div style={{ height: "1.25rem" }} />
-          <Snippet title="Usage" code={USAGE_SNIPPET} />
-        </section>
-
-        <section className="section">
-          <h2>Review with a URL</h2>
-          <p>
-            Every control writes itself into the query string. These are the
-            parameters a link can set.
-          </p>
-          <table className="params">
-            <thead>
-              <tr>
-                <th>Parameter</th>
-                <th>What it does</th>
-              </tr>
-            </thead>
-            <tbody>
-              {PARAMS.map(([param, what]) => (
-                <tr key={param}>
-                  <td>{param}</td>
-                  <td>{what}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className="note" style={{ marginTop: "1rem" }}>
-            For instance{" "}
-            <a href="?layout=page&sample=1&theme=light">
-              ?layout=page&amp;sample=1&amp;theme=light
-            </a>{" "}
-            reviews answer rendering on the light theme without spending
-            tokens.
-          </p>
-        </section>
-
-        <section className="section">
-          <h2>Scroll isolation</h2>
-          <p>
-            The panel manages its own scroll region and marks it{" "}
-            <code>data-lenis-prevent</code>, so a smooth-scroll library on the
-            host page can't hijack the wheel over it. Open the panel, put the
-            cursor inside it and scroll: this page should stay put.
-          </p>
-          {Array.from({ length: 6 }).map((_, i) => (
-            <p key={i}>
-              Filler paragraph {i + 1}. Lorem ipsum dolor sit amet, consectetur
-              adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo
-              consequat.
-            </p>
-          ))}
-        </section>
-
-        <footer className="foot">
-          <p>
-            <a href="https://github.com/0gfoundation/ask-ai-widget">
-              0gfoundation/ask-ai-widget
-            </a>{" "}
-            — every push to main, every pull request and every tag deploys this
-            page to its own hostname under <code>ask-zed-widget.0g.ai</code>.
-            Each hostname is its own origin, so previews never share a saved
-            conversation.
-          </p>
-        </footer>
-      </main>
+            </footer>
+          </main>
+        </div>
+      </div>
 
       {showWidget && (
         <AskAIWidget
@@ -673,3 +742,4 @@ createRoot(document.getElementById("root")!).render(
     <Demo />
   </React.StrictMode>,
 );
+
