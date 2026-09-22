@@ -1,0 +1,413 @@
+/* Styling for the demo page itself — not part of the package. The widget
+   owns its own look (see src/styles/widget.css); nothing here is meant to
+   reach inside it.
+
+   Two deliberate choices:
+
+   - The shell follows the theme picked in the controls, not the OS, so the
+     page around the widget matches whatever theme is being reviewed.
+   - The element rules below (`p`, `a`, `code`, `.font-mono`) are unscoped on
+     purpose. Host sites style bare elements like this all the time, and it
+     is exactly what used to leak into the widget's rendered answers. Leaving
+     them here means every preview is also a test that it no longer does. */
+
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--page-bg);
+  color: var(--page-fg);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Host-style element rules. See the note at the top of this file. */
+p {
+  line-height: 1.65;
+  color: var(--page-muted);
+}
+
+a {
+  color: var(--page-link);
+}
+
+code,
+.font-mono {
+  font-family: "SF Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85em;
+}
+
+.demo {
+  --page-bg: #f5f5f7;
+  --page-fg: #0a0a0a;
+  --page-muted: #4a4a52;
+  --page-subtle: #77777f;
+  --page-card: #ffffff;
+  --page-border: #e3e3e8;
+  --page-code-bg: #f0f0f3;
+  --page-link: #7800ba;
+}
+
+.demo[data-demo-theme="dark"] {
+  --page-bg: #08080a;
+  --page-fg: #fafafa;
+  --page-muted: #b4b4bd;
+  --page-subtle: #7c7c86;
+  --page-card: #121216;
+  --page-border: #25252c;
+  --page-code-bg: #1a1a20;
+  --page-link: #c98bff;
+}
+
+.demo {
+  background: var(--page-bg);
+  color: var(--page-fg);
+  min-height: 100vh;
+  padding: 0 0 6rem;
+}
+
+.wrap {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* Header */
+
+.masthead {
+  padding: 3.5rem 0 2rem;
+}
+
+.masthead h1 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+}
+
+.masthead .lede {
+  font-size: 1.05rem;
+  max-width: 44rem;
+  margin: 0;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.fact {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--page-border);
+  border-radius: 999px;
+  background: var(--page-card);
+  font-size: 0.75rem;
+}
+
+.fact b {
+  font-weight: 600;
+  color: var(--page-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.65rem;
+}
+
+.fact span {
+  color: var(--page-fg);
+}
+
+/* Controls */
+
+.controls {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin: 0 0 2.5rem;
+  padding: 1rem 1.25rem;
+  background: color-mix(in srgb, var(--page-card) 88%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--page-border);
+}
+
+.controls-inner {
+  max-width: 62rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.75rem 1rem;
+  align-items: end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.field > span {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--page-subtle);
+  font-weight: 600;
+}
+
+.field select,
+.field input[type="text"] {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--page-fg);
+  background: var(--page-bg);
+  border: 1px solid var(--page-border);
+  border-radius: 8px;
+}
+
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  grid-column: 1 / -1;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--page-border);
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--page-muted);
+  cursor: pointer;
+}
+
+.check input {
+  margin: 0;
+  accent-color: #b75fff;
+}
+
+.btn {
+  padding: 0.4rem 0.75rem;
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--page-fg);
+  background: var(--page-bg);
+  border: 1px solid var(--page-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  border-color: var(--page-subtle);
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  grid-column: 1 / -1;
+}
+
+/* Accent picker */
+
+.accent-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.accent-row input[type="color"] {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--page-border);
+  border-radius: 8px;
+  background: none;
+  cursor: pointer;
+}
+
+.swatches {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.swatch {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--page-border);
+  padding: 0;
+  cursor: pointer;
+}
+
+.swatch[aria-pressed="true"] {
+  outline: 2px solid var(--page-fg);
+  outline-offset: 1px;
+}
+
+.derived {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.4rem;
+  font-size: 0.68rem;
+  color: var(--page-subtle);
+}
+
+.derived i {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 3px;
+  border: 1px solid var(--page-border);
+  margin-right: 0.25rem;
+  vertical-align: -1px;
+}
+
+/* Sections */
+
+.section {
+  margin: 0 0 4rem;
+}
+
+.section > h2 {
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.35rem;
+}
+
+.section > h2 .tag {
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  background: var(--page-code-bg);
+  color: var(--page-subtle);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  vertical-align: 2px;
+}
+
+.section > p {
+  margin: 0 0 1.25rem;
+  max-width: 44rem;
+}
+
+.note {
+  font-size: 0.8rem;
+  color: var(--page-subtle);
+}
+
+.frame {
+  height: min(70vh, 40rem);
+  min-height: 24rem;
+  margin: 0 0 1rem;
+}
+
+.stage {
+  display: grid;
+  place-items: center;
+  gap: 1rem;
+  padding: 2.5rem 1.5rem;
+  border: 1px dashed var(--page-border);
+  border-radius: 16px;
+  background: var(--page-card);
+  text-align: center;
+}
+
+.stage .note {
+  max-width: 28rem;
+}
+
+/* Code */
+
+.snippet {
+  position: relative;
+  margin: 0;
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  background: var(--page-code-bg);
+  border: 1px solid var(--page-border);
+  border-radius: 12px;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--page-fg);
+}
+
+.snippet code {
+  font-size: inherit;
+  white-space: pre;
+}
+
+.snippet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.5rem;
+}
+
+.snippet-head h3 {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--page-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Params table */
+
+.params {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.params th,
+.params td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--page-border);
+  vertical-align: top;
+}
+
+.params th {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--page-subtle);
+}
+
+.params td:first-child {
+  white-space: nowrap;
+  font-family: "SF Mono", ui-monospace, monospace;
+}
+
+.foot {
+  padding-top: 2rem;
+  border-top: 1px solid var(--page-border);
+  font-size: 0.8rem;
+  color: var(--page-subtle);
+}
+
+@media (max-width: 640px) {
+  .controls {
+    position: static;
+  }
+
+  .masthead {
+    padding-top: 2.5rem;
+  }
+}

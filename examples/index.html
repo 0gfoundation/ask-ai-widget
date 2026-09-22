@@ -3,57 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Live demo of the 0G Ask AI widget: the floating chat and the full-page layout, with every prop driven from the URL."
+    />
     <title>Ask AI Widget — Demo</title>
+    <!-- Paint the page's ground before the stylesheet lands so a dark-mode
+         reviewer doesn't get a white flash. Everything else is in demo.css. -->
     <style>
-      body {
-        margin: 0;
-        font-family: ui-sans-serif, system-ui, sans-serif;
+      html {
         background: #f5f5f7;
-        color: #0a0a0a;
-      }
-      .page {
-        max-width: 640px;
-        margin: 0 auto;
-        padding: 4rem 1.5rem 8rem;
-      }
-      h1 {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-      }
-      p {
-        line-height: 1.6;
-        color: #444;
-      }
-      .controls {
-        margin: 2rem 0;
-        padding: 1rem;
-        background: #fff;
-        border: 1px solid #e5e5e5;
-        border-radius: 12px;
-      }
-      .controls label {
-        display: block;
-        font-size: 0.85rem;
-        margin-bottom: 0.5rem;
-        color: #333;
-      }
-      .controls input, .controls select {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        font: inherit;
-        margin-bottom: 0.75rem;
-      }
-      .fullpage {
-        height: 70vh;
-        margin: 2rem 0;
       }
       @media (prefers-color-scheme: dark) {
-        body { background: #111; color: #f5f5f5; }
-        .controls { background: #1a1a1a; border-color: #2a2a2a; }
-        .controls input, .controls select { background: #0a0a0a; color: #f5f5f5; border-color: #2a2a2a; }
-        p { color: #d4d4d8; }
+        html {
+          background: #08080a;
+        }
       }
     </style>
   </head>
