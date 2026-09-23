@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+import type { RefObject } from "react";
 import MessageBubble from "./MessageBubble";
 import type { ChatMessage } from "../types";
 
@@ -7,6 +8,8 @@ interface MessageListProps {
   awaitingFirstDelta: boolean;
   onSuggestionClick: (text: string) => void;
   suggestionsEnabled: boolean;
+  /** The panel's scroll region, owned by ChatPanel. */
+  scrollRef: RefObject<HTMLDivElement | null>;
 }
 
 export default function MessageList({
@@ -14,16 +17,20 @@ export default function MessageList({
   awaitingFirstDelta,
   onSuggestionClick,
   suggestionsEnabled,
+  scrollRef,
 }: MessageListProps) {
-  const endRef = useRef<HTMLDivElement>(null);
   const messageCount = messages.length;
 
-  // Scroll the LAST message into view inside the scroll container (not the
-  // window — important because the widget panel has its own scrollable
-  // region). Use `nearest` block to avoid jumping past the composer.
+  // Keep the latest message in view by scrolling the panel's own container.
+  // scrollIntoView() was doing this before, but it walks up every scrollable
+  // ancestor including the document: mounting a restored conversation in the
+  // page flow (ChatPage, or ChatPanel inline) dragged the host page down to
+  // the chat. Scrolling the container can't move anything outside the widget.
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messageCount, awaitingFirstDelta]);
+    const container = scrollRef.current;
+    if (!container) return;
+    container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+  }, [messageCount, awaitingFirstDelta, scrollRef]);
 
   let lastAssistantIdx = -1;
   for (let i = messages.length - 1; i >= 0; i--) {
@@ -77,7 +84,6 @@ export default function MessageList({
           </div>
         </div>
       )}
-      <div ref={endRef} />
     </div>
   );
 }
